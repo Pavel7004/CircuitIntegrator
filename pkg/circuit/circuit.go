@@ -1,6 +1,8 @@
 package circuit
 
-import "math"
+import (
+	"math"
+)
 
 type Circuit struct {
 	supplyVoltage     float64
@@ -64,12 +66,14 @@ func (st *Circuit) GetLoadVoltage() float64 {
 }
 
 func (st *Circuit) GetLoadVoltageFunc() func(x float64) float64 {
-	stateChangeTime := -st.tau * math.Log(1-st.gapTriggerVoltage/st.supplyVoltage)
+	var (
+		stateChangeTime = -st.tau * math.Log(1-st.gapTriggerVoltage/st.supplyVoltage)
+	)
 	return func(x float64) float64 {
 		if x < stateChangeTime {
 			return 0.0
 		}
-		return 0.58 * st.gapTriggerVoltage * float64(st.stagesCount) * math.Exp(-(x-stateChangeTime)/st.load.tau)
+		return st.gapTriggerVoltage * float64(st.stagesCount) * math.Exp(-(x-stateChangeTime)/st.load.tau)
 	}
 }
 
