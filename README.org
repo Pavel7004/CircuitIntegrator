@@ -1,14 +1,13 @@
 #+TITLE: GraphPlot
 #+AUTHOR: Kovalev Pavel
 
-* GraphPlot
 Программа для моделирования работы электрической схемы, написанная на Golang.
 
-** Зависимости
+* Зависимости
 - golang
 - gonum
 
-** Сборка программы
+* Сборка программы
 #+begin_src bash
 make
 #+end_src
