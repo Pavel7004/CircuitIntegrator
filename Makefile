@@ -7,7 +7,6 @@
 all: build
 
 build:
-	go mod tidy
 	go build ./cmd/plotter.go
 
 clear:
