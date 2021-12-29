@@ -7,6 +7,12 @@
 
 * Зависимости
 - golang
+#+begin_src bash
+# Ubuntu:
+apt install golang
+# Arch Linux:
+pacman -S go
+#+end_src
 - gonum
 
 * Сборка программы
