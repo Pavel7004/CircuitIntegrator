@@ -21,8 +21,12 @@ type InfoPlotter struct {
 }
 
 func NewInfoPlotter(dpi int) *InfoPlotter {
+	p, err := plot.New()
+	if err != nil {
+		panic(err)
+	}
 	return &InfoPlotter{
-		plot:      plot.New(),
+		plot:      p,
 		dpi:       dpi,
 		lastPoint: nil,
 		color:     nil,
