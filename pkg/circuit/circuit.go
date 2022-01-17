@@ -68,9 +68,13 @@ func (st *Circuit) GetLoadVoltage() float64 {
 	return st.state.GetLoadVoltage()
 }
 
+func (st *Circuit) GetSystemPeriod() float64 {
+	return -st.tau * math.Log(1-st.gapTriggerVoltage/st.supplyVoltage)
+}
+
 func (st *Circuit) GetLoadVoltageFunc() func(x float64) float64 {
 	var (
-		stateChangeTime = -st.tau * math.Log(1-st.gapTriggerVoltage/st.supplyVoltage)
+		stateChangeTime = st.GetSystemPeriod()
 	)
 	return func(x float64) float64 {
 		if x < stateChangeTime {
