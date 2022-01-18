@@ -14,7 +14,7 @@ type EulerInt struct {
 
 var _ integrator.Integrator = (*EulerInt)(nil)
 
-func NewEulerInt(begin, end, step float64, saveFn func(t float64, x *circuit.Circuit)) *EulerInt {
+func NewEulerInt(begin, end, step float64, saveFn func(t float64, x *circuit.Circuit)) integrator.Integrator {
 	return &EulerInt{
 		begin:  begin,
 		end:    end,

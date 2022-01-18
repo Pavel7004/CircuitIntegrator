@@ -14,7 +14,7 @@ type MidpointInt struct {
 
 var _ integrator.Integrator = (*MidpointInt)(nil)
 
-func NewMidpointInt(begin, end, step float64, saveFn func(t float64, x *circuit.Circuit)) *MidpointInt {
+func NewMidpointInt(begin, end, step float64, saveFn func(t float64, x *circuit.Circuit)) integrator.Integrator {
 	return &MidpointInt{
 		begin:  begin,
 		end:    end,

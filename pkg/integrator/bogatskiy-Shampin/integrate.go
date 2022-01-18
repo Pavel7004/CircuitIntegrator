@@ -14,7 +14,7 @@ type ShapinInt struct {
 
 var _ integrator.Integrator = (*ShapinInt)(nil)
 
-func NewShampinInt(begin, end, step float64, saveFn func(t float64, x *circuit.Circuit)) *ShapinInt {
+func NewShampinInt(begin, end, step float64, saveFn func(t float64, x *circuit.Circuit)) integrator.Integrator {
 	return &ShapinInt{
 		begin:  begin,
 		end:    end,
