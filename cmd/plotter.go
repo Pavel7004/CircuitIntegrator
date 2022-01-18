@@ -2,46 +2,55 @@ package main
 
 import (
 	"image/color"
-	"image/png"
-	"os"
 
-	"github.com/Pavel7004/GraphPlot/pkg/circuit"
+	. "github.com/Pavel7004/GraphPlot/pkg/circuit"
 	"github.com/Pavel7004/GraphPlot/pkg/graph"
+	"github.com/Pavel7004/GraphPlot/pkg/integrator"
 	. "github.com/Pavel7004/GraphPlot/pkg/integrator/bogatskiy-Shampin"
-	. "github.com/Pavel7004/GraphPlot/pkg/integrator/euler"
+	// . "github.com/Pavel7004/GraphPlot/pkg/integrator/euler"
 	// . "github.com/Pavel7004/GraphPlot/pkg/integrator/midpoint"
 )
 
+type NewIntFunc func(begin, end float64, step float64, saveFn func(t float64, x *Circuit)) integrator.Integrator
+
 func main() {
-	chargeCirc := circuit.ChargeComponents{
+	chargeCirc := &ChargeComponents{
 		SupplyVoltage:     6000,
 		Capacity:          0.001,
 		Resistance:        5000,
 		StagesCount:       5,
 		GapTriggerVoltage: 5700,
 	}
-	load := circuit.LoadComponents{
+	load := &LoadComponents{
 		Resistance: 10000,
 	}
-	st := circuit.NewCircuit(chargeCirc, load)
 	gr := graph.NewInfoPlotter(40)
-	int := NewShampinInt(0, 60, 0.1, func(t float64, x *circuit.Circuit) {
-		gr.AddPoint(t, x.GetLoadVoltage())
-	})
-	intMid := NewEulerInt(0, 60, 0.1, func(t float64, x *circuit.Circuit) {
-		gr.AddPoint(t, x.GetLoadVoltage())
-	})
-	intMid.Integrate(st)
-	gr.PrepareToAddNewPlot(color.RGBA{G: 255, A: 255})
-	st = circuit.NewCircuit(chargeCirc, load)
-	int.Integrate(st)
-	//gr.PlotFunc(color.RGBA{R: 255, A: 255}, st.GetLoadVoltageFunc())
-	imgFile, err := os.Create("result.png")
-	if err != nil {
-		panic(err)
+	PlotSystem(gr, chargeCirc, load, NewShampinInt)
+	PlotTheory(gr, chargeCirc, load)
+	gr.SaveToFile("result.png")
+}
+
+func PlotSystem(gr *graph.InfoPlotter, chargeCirc *ChargeComponents, load *LoadComponents, newInt NewIntFunc) {
+	var (
+		st     = NewCircuit(*chargeCirc, *load)
+		period = st.GetSystemPeriod()
+		left   = 0.0
+		right  = period
+	)
+	for right < 60 {
+		int := newInt(left, right, 0.1, func(t float64, x *Circuit) {
+			gr.AddPoint(t, x.GetLoadVoltage())
+		})
+		int.Integrate(st)
+		st.ToggleState()
+		left = right + 1
+		right += period
 	}
-	if err := png.Encode(imgFile, gr.DrawInImage()); err != nil {
-		panic(err)
-	}
-	imgFile.Close()
+}
+
+func PlotTheory(gr *graph.InfoPlotter, chargeCirc *ChargeComponents, load *LoadComponents) {
+	var (
+		st = NewCircuit(*chargeCirc, *load)
+	)
+	gr.PlotFunc(color.RGBA{R: 255, A: 255}, st.GetLoadVoltageFunc())
 }
