@@ -69,9 +69,7 @@ func (st *Circuit) GetSystemPeriod() float64 {
 }
 
 func (st *Circuit) GetLoadVoltageFunc() func(x float64) float64 {
-	var (
-		stateChangeTime = st.GetSystemPeriod()
-	)
+	stateChangeTime := st.GetSystemPeriod()
 	return func(x float64) float64 {
 		if x < stateChangeTime {
 			return 0.0
@@ -81,9 +79,7 @@ func (st *Circuit) GetLoadVoltageFunc() func(x float64) float64 {
 }
 
 func (st *Circuit) GetSystemCurrent() float64 {
-	var (
-		current float64
-	)
+	var current float64
 	for _, capVol := range st.voltagesCap {
 		current += (st.supplyVoltage - capVol) / (2 * st.resistance)
 	}
