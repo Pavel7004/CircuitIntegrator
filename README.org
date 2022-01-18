@@ -90,7 +90,7 @@ f(x_{i}) = -1/\tau * x_{i}
 
 Запуск программы:
 #+begin_src bash
-./plotter
+./plotter -s 0.1 -o result.png
 #+end_src
 
 ** Метод Эйлера vs Теория
