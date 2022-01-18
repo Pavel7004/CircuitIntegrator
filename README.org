@@ -45,13 +45,7 @@ u = U_{зам}*e^{-t/\tau}
 
 Использовалась информация из [[https://ocw.snu.ac.kr/sites/default/files/NOTE/Lecture_05_Marx%20generators%20and%20Marx-like%20circuits.pdf][презентации]]
 
-\left (
-\begin{array}{c}
-u_{1} \
-\vdots
-u_{n} \
-\end{array}
-\right )
+X = (u_{1}, \ldots , u_{n})
 
 * Структура программы
 - pkg/circuit
