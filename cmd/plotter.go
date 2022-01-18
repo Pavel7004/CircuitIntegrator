@@ -4,6 +4,7 @@ import (
 	"image/color"
 
 	. "github.com/Pavel7004/GraphPlot/pkg/circuit"
+	"github.com/Pavel7004/GraphPlot/pkg/cli"
 	"github.com/Pavel7004/GraphPlot/pkg/graph"
 	"github.com/Pavel7004/GraphPlot/pkg/integrator"
 	. "github.com/Pavel7004/GraphPlot/pkg/integrator/bogatskiy-Shampin"
@@ -14,6 +15,7 @@ import (
 type NewIntFunc func(begin, end float64, step float64, saveFn func(t float64, x *Circuit)) integrator.Integrator
 
 func main() {
+	cli.ParseArgs()
 	chargeCirc := &ChargeComponents{
 		SupplyVoltage:     6000,
 		Capacity:          0.001,
@@ -27,7 +29,7 @@ func main() {
 	gr := graph.NewInfoPlotter(40)
 	PlotSystem(gr, chargeCirc, load, NewShampinInt)
 	PlotTheory(gr, chargeCirc, load)
-	gr.SaveToFile("result.png")
+	gr.SaveToFile(cli.Filename)
 }
 
 func PlotSystem(gr *graph.InfoPlotter, chargeCirc *ChargeComponents, load *LoadComponents, newInt NewIntFunc) {
@@ -38,7 +40,7 @@ func PlotSystem(gr *graph.InfoPlotter, chargeCirc *ChargeComponents, load *LoadC
 		right  = period
 	)
 	for right < 60 {
-		int := newInt(left, right, 0.1, func(t float64, x *Circuit) {
+		int := newInt(left, right, cli.Step, func(t float64, x *Circuit) {
 			gr.AddPoint(t, x.GetLoadVoltage())
 		})
 		int.Integrate(st)

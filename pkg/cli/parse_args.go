@@ -7,14 +7,15 @@ import (
 )
 
 var (
-	fileName       string = os.Getenv("PWD") + string(os.PathSeparator) + "result.png"
-	capacitorIndex uint   = 1
-	state          string = "help"
+	Filename string  = "result.png"
+	Step     float64 = 0.1
+	Dpi      int     = 40
 )
 
 func init() {
-	getopt.FlagLong(&fileName, "outputFile", 'o', "output file path")
-	getopt.Flag(&capacitorIndex, 'c', "Capacitor Index")
+	getopt.FlagLong(&Filename, "output", 'o', "Output file path")
+	getopt.FlagLong(&Step, "step", 's', "Integrator step")
+	getopt.FlagLong(&Dpi, "dpi", 'd', "Plot dpi")
 }
 
 func ParseArgs() {
