@@ -8,7 +8,7 @@ import (
 	"github.com/Pavel7004/GraphPlot/pkg/graph"
 	"github.com/Pavel7004/GraphPlot/pkg/integrator"
 	. "github.com/Pavel7004/GraphPlot/pkg/integrator/bogatskiy-Shampin"
-	// . "github.com/Pavel7004/GraphPlot/pkg/integrator/euler"
+	. "github.com/Pavel7004/GraphPlot/pkg/integrator/euler"
 	// . "github.com/Pavel7004/GraphPlot/pkg/integrator/midpoint"
 )
 
@@ -27,8 +27,10 @@ func main() {
 		Resistance: 10000,
 	}
 	gr := graph.NewInfoPlotter(40)
+	gr.PrepareToAddNewPlot(color.RGBA{G: 255, A: 255})
+	PlotSystem(gr, chargeCirc, load, NewEulerInt)
+	gr.PrepareToAddNewPlot(color.RGBA{A: 255})
 	PlotSystem(gr, chargeCirc, load, NewShampinInt)
-	PlotTheory(gr, chargeCirc, load)
 	gr.SaveToFile(cli.Filename)
 }
 
