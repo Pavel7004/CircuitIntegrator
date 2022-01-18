@@ -41,11 +41,7 @@ func (st *Circuit) GetDerivative() []float64 {
 }
 
 func (st *Circuit) ToggleState() {
-	if st.stateChange && st.voltagesCap[0]-st.gapTriggerVoltage > 0.1 {
-		st.state = newDischargingState(st)
-	} else if st.stateChange && st.voltagesCap[0]-0.001*st.supplyVoltage < 0.00001 {
-		st.state = newChargingState(st)
-	}
+	st.state.ChangeState()
 }
 
 func (st *Circuit) ApplyDerivative(h float64, derivative []float64) {
