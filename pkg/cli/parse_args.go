@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"os"
-
 	"github.com/pborman/getopt/v2"
 )
 
