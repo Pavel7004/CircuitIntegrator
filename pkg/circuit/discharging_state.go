@@ -35,3 +35,7 @@ func (s *dischargingState) GetLoadVoltage() float64 {
 	}
 	return capVoltage
 }
+
+func (s *dischargingState) ChangeState() {
+	s.circ.state = newChargingState(s.circ)
+}

@@ -34,3 +34,7 @@ func (s *chargingState) Clone(newCirc *Circuit) circuitState {
 func (s *chargingState) GetLoadVoltage() float64 {
 	return 0.0
 }
+
+func (s *chargingState) ChangeState() {
+	s.circ.state = newDischargingState(s.circ)
+}
