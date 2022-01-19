@@ -24,7 +24,7 @@ func main() {
 		GapTriggerVoltage: 5700,
 	}
 	load := &LoadComponents{
-		Resistance: 10000,
+		Resistance: cli.LoadRes,
 	}
 	gr := graph.NewInfoPlotter(cli.Dpi)
 	gr.PrepareToAddNewPlot(color.RGBA{G: 255, A: 255})

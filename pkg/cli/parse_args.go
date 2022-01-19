@@ -8,7 +8,7 @@ var (
 	Filename string  = "result.png"
 	Step     float64 = 0.1
 	Dpi      int     = 40
-	LoadRes  int     = 9000
+	LoadRes  float64 = 9000.0
 )
 
 func init() {
