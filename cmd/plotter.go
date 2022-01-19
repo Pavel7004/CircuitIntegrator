@@ -26,7 +26,7 @@ func main() {
 	load := &LoadComponents{
 		Resistance: 10000,
 	}
-	gr := graph.NewInfoPlotter(40)
+	gr := graph.NewInfoPlotter(cli.Dpi)
 	gr.PrepareToAddNewPlot(color.RGBA{G: 255, A: 255})
 	PlotSystem(gr, chargeCirc, load, NewEulerInt)
 	gr.PrepareToAddNewPlot(color.RGBA{A: 255})
