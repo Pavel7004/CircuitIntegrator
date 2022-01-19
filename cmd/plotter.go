@@ -41,20 +41,18 @@ func PlotSystem(gr *graph.InfoPlotter, chargeCirc *ChargeComponents, load *LoadC
 		left   = 0.0
 		right  = period
 	)
-	for right < 60 {
+	for right <= 60 {
 		int := newInt(left, right, cli.Step, func(t float64, x *Circuit) {
 			gr.AddPoint(t, x.GetLoadVoltage())
 		})
 		int.Integrate(st)
 		st.ToggleState()
-		left = right + 1
+		left = right + cli.Step
 		right += period
 	}
 }
 
 func PlotTheory(gr *graph.InfoPlotter, chargeCirc *ChargeComponents, load *LoadComponents) {
-	var (
-		st = NewCircuit(*chargeCirc, *load)
-	)
+	st := NewCircuit(*chargeCirc, *load)
 	gr.PlotFunc(color.RGBA{R: 255, A: 255}, st.GetLoadVoltageFunc())
 }
