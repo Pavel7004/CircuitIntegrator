@@ -19,7 +19,7 @@ type Circuit struct {
 
 func NewCircuit(chargeComp ChargeComponents, load LoadComponents) *Circuit {
 	load.chargeCapacity = chargeComp.Capacity / float64(chargeComp.StagesCount)
-	load.tau = load.chargeCapacity * load.Resistance
+	load.tau = load.chargeCapacity * (load.Resistance + chargeComp.Resistance)
 	circ := &Circuit{
 		supplyVoltage:     chargeComp.SupplyVoltage,
 		capacity:          chargeComp.Capacity,

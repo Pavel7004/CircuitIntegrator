@@ -20,7 +20,7 @@ func main() {
 		SupplyVoltage:     6000,
 		Capacity:          0.001,
 		Resistance:        5000,
-		StagesCount:       5,
+		StagesCount:       cli.CapCount,
 		GapTriggerVoltage: 5700,
 	}
 	load := &LoadComponents{
