@@ -62,7 +62,8 @@ func (ip *InfoPlotter) PrepareToAddNewPlot(color color.Color) {
 func (ip *InfoPlotter) PlotFunc(color color.Color, fn func(x float64) float64) {
 	pFn := plotter.NewFunction(fn)
 	pFn.Color = color
-	pFn.Width = vg.Points(2)
+	pFn.Width = vg.Points(1)
+	pFn.Samples = 200
 	ip.plot.Add(pFn)
 }
 
