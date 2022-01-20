@@ -71,7 +71,7 @@ func (st *Circuit) GetSystemPeriod() float64 {
 func (st *Circuit) GetLoadVoltageFunc() func(x float64) float64 {
 	stateChangeTime := st.GetSystemPeriod()
 	return func(x float64) float64 {
-		if x < stateChangeTime {
+		if x <= stateChangeTime {
 			return 0.0
 		}
 		return st.gapTriggerVoltage * float64(st.stagesCount) * math.Exp(-(x-stateChangeTime)/st.load.tau)
