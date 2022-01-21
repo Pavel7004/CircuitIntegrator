@@ -36,5 +36,7 @@ func (s *chargingState) GetLoadVoltage() float64 {
 }
 
 func (s *chargingState) ChangeState() {
-	s.circ.state = newDischargingState(s.circ)
+	if s.circ.gapTriggerVoltage-s.circ.voltagesCap[0] < 0.0001 {
+		s.circ.state = newDischargingState(s.circ)
+	}
 }
