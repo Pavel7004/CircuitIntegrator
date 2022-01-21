@@ -12,14 +12,14 @@ type Circuit struct {
 	gapTriggerVoltage float64
 	load              LoadComponents
 	state             circuitState
-	tau               float64
+	tau               []float64
 	stateChange       bool
 	voltagesCap       []float64
 }
 
 func NewCircuit(chargeComp ChargeComponents, load LoadComponents) *Circuit {
 	load.chargeCapacity = chargeComp.Capacity / float64(chargeComp.StagesCount)
-	load.tau = load.chargeCapacity * (load.Resistance + chargeComp.Resistance)
+	load.tau = load.chargeCapacity * load.Resistance
 	circ := &Circuit{
 		supplyVoltage:     chargeComp.SupplyVoltage,
 		capacity:          chargeComp.Capacity,
