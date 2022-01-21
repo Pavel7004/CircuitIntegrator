@@ -27,6 +27,7 @@ func main() {
 		Resistance: cli.LoadRes,
 	}
 	gr := graph.NewInfoPlotter(cli.Dpi)
+	PlotTheory(gr, chargeCirc, load)
 	gr.PrepareToAddNewPlot(color.RGBA{G: 255, A: 255})
 	PlotSystem(gr, chargeCirc, load, NewEulerInt)
 	gr.PrepareToAddNewPlot(color.RGBA{A: 255})
@@ -46,7 +47,7 @@ func PlotSystem(gr *graph.InfoPlotter, chargeCirc *ChargeComponents, load *LoadC
 			gr.AddPoint(t, x.GetLoadVoltage())
 		})
 		int.Integrate(st)
-		st.ToggleState()
+		st.ToggleStateMaybe()
 		left = right + cli.Step
 		right += period
 	}
