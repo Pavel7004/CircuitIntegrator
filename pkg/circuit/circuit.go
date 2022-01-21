@@ -40,15 +40,16 @@ func (st *Circuit) GetDerivative() []float64 {
 	return st.state.GetDerivative()
 }
 
-func (st *Circuit) ToggleState() {
+func (st *Circuit) ToggleStateMaybe() {
 	st.state.ChangeState()
 }
 
 func (st *Circuit) ApplyDerivative(h float64, derivative []float64) {
 	for i := range st.voltagesCap {
 		st.voltagesCap[i] += h * derivative[i]
-		if st.voltagesCap[i] < 0 {
-			st.voltagesCap[i] = 0
+		for st.voltagesCap[i] < 0 {
+			h /= 2
+			st.voltagesCap[i] -= h * derivative[i]
 		}
 	}
 }
