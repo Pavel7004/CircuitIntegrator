@@ -28,9 +28,12 @@ func NewCircuit(chargeComp ChargeComponents, load LoadComponents) *Circuit {
 		gapTriggerVoltage: chargeComp.GapTriggerVoltage,
 		load:              load,
 		state:             nil,
-		tau:               2 * chargeComp.Resistance * chargeComp.Capacity,
+		tau:               make([]float64, chargeComp.StagesCount),
 		stateChange:       true,
 		voltagesCap:       make([]float64, chargeComp.StagesCount),
+	}
+	for i := range circ.tau {
+		circ.tau[i] = 2 * float64(i+1) * circ.resistance * circ.capacity
 	}
 	circ.state = newChargingState(circ)
 	return circ
@@ -66,16 +69,22 @@ func (st *Circuit) GetLoadVoltage() float64 {
 }
 
 func (st *Circuit) GetSystemPeriod() float64 {
-	return -st.tau * math.Log(1-st.gapTriggerVoltage/st.supplyVoltage)
+	return -st.tau[0] * math.Log(1-st.gapTriggerVoltage/st.supplyVoltage)
 }
 
 func (st *Circuit) GetLoadVoltageFunc() func(x float64) float64 {
-	stateChangeTime := st.GetSystemPeriod()
+	var (
+		stateChangeTime = st.GetSystemPeriod()
+		maxVoltage      = st.supplyVoltage * float64(st.stagesCount)
+	)
+	for i := range st.tau {
+		maxVoltage -= st.supplyVoltage * math.Exp(-stateChangeTime/st.tau[i])
+	}
 	return func(x float64) float64 {
-		if x <= stateChangeTime {
+		if x < stateChangeTime {
 			return 0.0
 		}
-		return st.gapTriggerVoltage * float64(st.stagesCount) * math.Exp(-(x-stateChangeTime)/st.load.tau)
+		return maxVoltage * math.Exp(-(x-stateChangeTime)/st.load.tau)
 	}
 }
 

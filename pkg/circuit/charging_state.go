@@ -13,14 +13,9 @@ func newChargingState(circ *Circuit) *chargingState {
 }
 
 func (s *chargingState) GetDerivative() []float64 {
-	var (
-		derivative          = make([]float64, 0, s.circ.stagesCount)
-		prevCapVolt float64 = s.circ.supplyVoltage
-	)
-	for _, volCap := range s.circ.voltagesCap {
-		chargeRatio := prevCapVolt / s.circ.supplyVoltage
-		derivative = append(derivative, chargeRatio*(s.circ.supplyVoltage-volCap)/s.circ.tau)
-		prevCapVolt = volCap
+	derivative := make([]float64, 0, s.circ.stagesCount)
+	for i, volCap := range s.circ.voltagesCap {
+		derivative = append(derivative, (s.circ.supplyVoltage-volCap)/s.circ.tau[i])
 	}
 	return derivative
 }
