@@ -77,7 +77,7 @@ func (st *Circuit) GetLoadVoltageFunc() func(x float64) float64 {
 		maxVoltage -= st.supplyVoltage * math.Exp(-stateChangeTime/st.tau[i])
 	}
 	return func(x float64) float64 {
-		if x < stateChangeTime {
+		if x <= stateChangeTime {
 			return 0.0
 		}
 		return maxVoltage * math.Exp(-(x-stateChangeTime)/st.load.tau)
