@@ -50,10 +50,6 @@ func (st *Circuit) ToggleStateMaybe() {
 func (st *Circuit) ApplyDerivative(h float64, derivative []float64) {
 	for i := range st.voltagesCap {
 		st.voltagesCap[i] += h * derivative[i]
-		for st.voltagesCap[i] < 0 {
-			h /= 2
-			st.voltagesCap[i] -= h * derivative[i]
-		}
 	}
 }
 
