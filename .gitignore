@@ -4,3 +4,4 @@
 tmp/
 plotter
 *.png
+__debug_bin
