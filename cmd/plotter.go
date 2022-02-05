@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"image/color"
 	"io"
 	"math"
@@ -40,7 +41,7 @@ func main() {
 	gr.SaveToFile(cli.Filename)
 }
 
-func PlotSystem(gr *graph.InfoPlotter, circ *Circuit, newInt NewIntFunc) {
+func PlotSystem(ctx context.Context, gr *graph.InfoPlotter, circ *Circuit, newInt NewIntFunc) {
 	var (
 		st     = circ.Clone()
 		period = st.GetSystemPeriod()
@@ -58,12 +59,12 @@ func PlotSystem(gr *graph.InfoPlotter, circ *Circuit, newInt NewIntFunc) {
 	}
 }
 
-func PlotTheory(gr *graph.InfoPlotter, circ *Circuit) {
+func PlotTheory(ctx context.Context, gr *graph.InfoPlotter, circ *Circuit) {
 	st := circ.Clone()
 	gr.PlotFunc(color.RGBA{R: 255, A: 255}, st.GetLoadVoltageFunc())
 }
 
-func PlotDiffFunc(gr *graph.InfoPlotter, circ *Circuit, newInt NewIntFunc) {
+func PlotDiffFunc(ctx context.Context, gr *graph.InfoPlotter, circ *Circuit, newInt NewIntFunc) {
 	var (
 		st     = circ.Clone()
 		period = st.GetSystemPeriod()
