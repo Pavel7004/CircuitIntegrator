@@ -2,23 +2,27 @@ package main
 
 import (
 	"image/color"
+	"io"
 	"math"
 
 	. "github.com/Pavel7004/GraphPlot/pkg/circuit"
 	"github.com/Pavel7004/GraphPlot/pkg/cli"
 	"github.com/Pavel7004/GraphPlot/pkg/graph"
 	"github.com/Pavel7004/GraphPlot/pkg/integrator"
+	opentracing "github.com/opentracing/opentracing-go"
+	"github.com/uber/jaeger-client-go"
+	jaegercfg "github.com/uber/jaeger-client-go/config"
+	jaegerlog "github.com/uber/jaeger-client-go/log"
+	"github.com/uber/jaeger-lib/metrics"
 
-	//. "github.com/Pavel7004/GraphPlot/pkg/integrator/bogatskiy-Shampin"
-	// . "github.com/Pavel7004/GraphPlot/pkg/integrator/euler"
-	// . "github.com/Pavel7004/GraphPlot/pkg/integrator/three-eighth"
-	// . "github.com/Pavel7004/GraphPlot/pkg/integrator/midpoint"
-	. "github.com/Pavel7004/GraphPlot/pkg/integrator/midpoint-implicit"
+	. "github.com/Pavel7004/GraphPlot/pkg/integrator/three-eighth"
 )
 
 type NewIntFunc func(begin, end float64, step float64, saveFn func(t float64, x *Circuit)) integrator.Integrator
 
 func main() {
+	closer := InitTracing()
+	defer closer.Close()
 	cli.ParseArgs()
 	chargeCirc := &ChargeComponents{
 		SupplyVoltage:     6000,
@@ -31,14 +35,7 @@ func main() {
 		Resistance: cli.LoadRes,
 	}
 	gr := graph.NewInfoPlotter(cli.Dpi)
-	// PlotTheory(gr, chargeCirc, load)
-	// gr.PrepareToAddNewPlot(color.RGBA{G: 255, A: 255})
-	// PlotSystem(gr, chargeCirc, load, NewMidpointImplInt)
-	// PlotSystem(gr, chargeCirc, load, NewEulerInt)
-	// gr.PrepareToAddNewPlot(color.RGBA{A: 255})
-	// PlotDiffFunc(gr, chargeCirc, load, NewThreeEighthInt)
-	// gr.PrepareToAddNewPlot(color.RGBA{G: 255, A: 255})
-	PlotDiffFunc(gr, chargeCirc, load, NewMidpointImplInt)
+	PlotDiffFunc(gr, chargeCirc, load, NewThreeEighthInt)
 	gr.SaveToFile(cli.Filename)
 }
 
@@ -75,11 +72,40 @@ func PlotDiffFunc(gr *graph.InfoPlotter, chargeCirc *ChargeComponents, load *Loa
 	)
 	for right <= 60 {
 		int := newInt(left, right, cli.Step, func(t float64, x *Circuit) {
-			gr.AddPoint(t, math.Abs(x.GetLoadVoltage()-theory(t)))
+			vol := x.GetLoadVoltage()
+			if vol < 0.0001 {
+				gr.AddPoint(t, 0.0)
+			} else {
+				gr.AddPoint(t, math.Abs(vol-theory(t))/vol*100)
+			}
+			x.ToggleStateMaybe()
 		})
 		int.Integrate(st)
-		st.ToggleStateMaybe()
 		left = right + cli.Step
 		right += period
 	}
+}
+
+func InitTracing() io.Closer {
+	cfg := jaegercfg.Configuration{
+		ServiceName: "GraphPlot",
+		Sampler: &jaegercfg.SamplerConfig{
+			Type:  jaeger.SamplerTypeConst,
+			Param: 1,
+		},
+		Reporter: &jaegercfg.ReporterConfig{
+			LogSpans: true,
+		},
+	}
+	jLogger := jaegerlog.StdLogger
+	jMetricsFactory := metrics.NullFactory
+	tracer, closer, err := cfg.NewTracer(
+		jaegercfg.Logger(jLogger),
+		jaegercfg.Metrics(jMetricsFactory),
+	)
+	if err != nil {
+		panic(err)
+	}
+	opentracing.SetGlobalTracer(tracer)
+	return closer
 }

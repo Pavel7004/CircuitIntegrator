@@ -8,9 +8,13 @@ require (
 )
 
 require (
+	github.com/HdrHistogram/hdrhistogram-go v1.1.2 // indirect
 	github.com/ajstarks/svgo v0.0.0-20210923152817-c3b6e2f0c527 // indirect
-	github.com/fogleman/gg v1.3.0 // indirect
-	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
-	github.com/jung-kurt/gofpdf v1.0.3-0.20190309125859-24315acbbda5 // indirect
+	github.com/opentracing/opentracing-go v1.2.0
+	github.com/pkg/errors v0.9.1 // indirect
+	github.com/uber/jaeger-client-go v2.30.0+incompatible
+	github.com/uber/jaeger-lib v2.4.1+incompatible
+	go.uber.org/atomic v1.9.0 // indirect
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d // indirect
+	gonum.org/v1/netlib v0.0.0-20210927171344-7274ea1d1842 // indirect
 )
