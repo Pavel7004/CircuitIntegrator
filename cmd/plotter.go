@@ -19,8 +19,6 @@ import (
 	. "github.com/Pavel7004/GraphPlot/pkg/integrator/three-eighth"
 )
 
-type NewIntFunc func(begin, end float64, step float64, saveFn func(t float64, x *Circuit)) integrator.Integrator
-
 func main() {
 	closer := InitTracing()
 	defer closer.Close()
@@ -43,7 +41,7 @@ func main() {
 	gr.SaveToFile(cli.Filename)
 }
 
-func PlotSystem(ctx context.Context, gr *graph.InfoPlotter, circ *Circuit, newInt NewIntFunc) {
+func PlotSystem(ctx context.Context, gr *graph.InfoPlotter, circ *Circuit, newInt integrator.NewIntFunc) {
 	var (
 		st     = circ.Clone()
 		period = st.GetSystemPeriod()
@@ -54,7 +52,7 @@ func PlotSystem(ctx context.Context, gr *graph.InfoPlotter, circ *Circuit, newIn
 		int := newInt(left, right, cli.Step, func(t float64, x *Circuit) {
 			gr.AddPoint(t, x.GetLoadVoltage())
 		})
-		int.Integrate(st)
+		int.Integrate(ctx, st)
 		st.ToggleStateMaybe()
 		left = right + cli.Step
 		right += period
@@ -66,7 +64,7 @@ func PlotTheory(ctx context.Context, gr *graph.InfoPlotter, circ *Circuit) {
 	gr.PlotFunc(color.RGBA{R: 255, A: 255}, st.GetLoadVoltageFunc())
 }
 
-func PlotDiffFunc(ctx context.Context, gr *graph.InfoPlotter, circ *Circuit, newInt NewIntFunc) {
+func PlotDiffFunc(ctx context.Context, gr *graph.InfoPlotter, circ *Circuit, newInt integrator.NewIntFunc) {
 	var (
 		st     = circ.Clone()
 		period = st.GetSystemPeriod()
@@ -84,7 +82,7 @@ func PlotDiffFunc(ctx context.Context, gr *graph.InfoPlotter, circ *Circuit, new
 			}
 			x.ToggleStateMaybe()
 		})
-		int.Integrate(st)
+		int.Integrate(ctx, st)
 		left = right + cli.Step
 		right += period
 	}
