@@ -36,8 +36,9 @@ func main() {
 		Resistance: cli.LoadRes,
 	}
 	circ := NewCircuit(chargeCirc, load)
+	ctx := context.Background()
 	gr := graph.NewInfoPlotter(cli.Dpi)
-	PlotDiffFunc(gr, circ, NewThreeEighthInt)
+	PlotDiffFunc(ctx, gr, circ, NewThreeEighthInt)
 	gr.SaveToFile(cli.Filename)
 }
 
