@@ -24,24 +24,25 @@ func main() {
 	closer := InitTracing()
 	defer closer.Close()
 	cli.ParseArgs()
-	chargeCirc := &ChargeComponents{
+	chargeCirc := ChargeComponents{
 		SupplyVoltage:     6000,
 		Capacity:          0.001,
 		Resistance:        5000,
 		StagesCount:       cli.CapCount,
 		GapTriggerVoltage: 5700,
 	}
-	load := &LoadComponents{
+	load := LoadComponents{
 		Resistance: cli.LoadRes,
 	}
+	circ := NewCircuit(chargeCirc, load)
 	gr := graph.NewInfoPlotter(cli.Dpi)
-	PlotDiffFunc(gr, chargeCirc, load, NewThreeEighthInt)
+	PlotDiffFunc(gr, circ, NewThreeEighthInt)
 	gr.SaveToFile(cli.Filename)
 }
 
-func PlotSystem(gr *graph.InfoPlotter, chargeCirc *ChargeComponents, load *LoadComponents, newInt NewIntFunc) {
+func PlotSystem(gr *graph.InfoPlotter, circ *Circuit, newInt NewIntFunc) {
 	var (
-		st     = NewCircuit(*chargeCirc, *load)
+		st     = circ.Clone()
 		period = st.GetSystemPeriod()
 		left   = 0.0
 		right  = period
@@ -57,14 +58,14 @@ func PlotSystem(gr *graph.InfoPlotter, chargeCirc *ChargeComponents, load *LoadC
 	}
 }
 
-func PlotTheory(gr *graph.InfoPlotter, chargeCirc *ChargeComponents, load *LoadComponents) {
-	st := NewCircuit(*chargeCirc, *load)
+func PlotTheory(gr *graph.InfoPlotter, circ *Circuit) {
+	st := circ.Clone()
 	gr.PlotFunc(color.RGBA{R: 255, A: 255}, st.GetLoadVoltageFunc())
 }
 
-func PlotDiffFunc(gr *graph.InfoPlotter, chargeCirc *ChargeComponents, load *LoadComponents, newInt NewIntFunc) {
+func PlotDiffFunc(gr *graph.InfoPlotter, circ *Circuit, newInt NewIntFunc) {
 	var (
-		st     = NewCircuit(*chargeCirc, *load)
+		st     = circ.Clone()
 		period = st.GetSystemPeriod()
 		left   = 0.0
 		right  = period
