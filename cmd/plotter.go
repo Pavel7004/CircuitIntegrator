@@ -24,6 +24,8 @@ type NewIntFunc func(begin, end float64, step float64, saveFn func(t float64, x 
 func main() {
 	closer := InitTracing()
 	defer closer.Close()
+	span, ctx := opentracing.StartSpanFromContext(context.Background(), "main")
+	defer span.Finish()
 	cli.ParseArgs()
 	chargeCirc := ChargeComponents{
 		SupplyVoltage:     6000,
@@ -36,7 +38,6 @@ func main() {
 		Resistance: cli.LoadRes,
 	}
 	circ := NewCircuit(chargeCirc, load)
-	ctx := context.Background()
 	gr := graph.NewInfoPlotter(cli.Dpi)
 	PlotDiffFunc(ctx, gr, circ, NewThreeEighthInt)
 	gr.SaveToFile(cli.Filename)
