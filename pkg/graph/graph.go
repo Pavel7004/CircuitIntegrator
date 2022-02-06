@@ -29,6 +29,8 @@ func NewInfoPlotter(bufferSize, dpi int) *InfoPlotter {
 		panic(err)
 	}
 	p.Add(plotter.NewGrid())
+	p.X.Label.Text = "t"
+	p.Y.Label.Text = "x(t)"
 	return &InfoPlotter{
 		plot:       p,
 		dpi:        dpi,
