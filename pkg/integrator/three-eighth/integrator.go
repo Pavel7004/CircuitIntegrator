@@ -32,11 +32,14 @@ func (si *ThreeEighthInt) Integrate(ctx context.Context, circ *circuit.Circuit) 
 	span.SetTag("EndPoint", si.end)
 	span.SetTag("Step", si.step)
 	span.SetTag("RK-stages", 4)
+
 	defer span.Finish()
+
 	var (
 		t    = si.begin
 		last bool
 	)
+	
 	for !last {
 		if t+si.step > si.end {
 			last = true

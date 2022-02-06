@@ -23,12 +23,15 @@ func main() {
 	cli.ParseArgs()
 	closer := InitTracing()
 	defer closer.Close()
+
 	span, ctx := opentracing.StartSpanFromContext(context.Background(), "main")
 	span.SetTag("Step", cli.Step)
 	span.SetTag("NumberOfCapacitors", cli.CapCount)
 	span.SetTag("Dpi", cli.Dpi)
 	span.SetTag("Filename", cli.Filename)
+
 	defer span.Finish()
+
 	chargeCirc := ChargeComponents{
 		SupplyVoltage:     6000,
 		Capacity:          0.001,
@@ -36,10 +39,13 @@ func main() {
 		StagesCount:       cli.CapCount,
 		GapTriggerVoltage: 5700,
 	}
+
 	load := LoadComponents{
 		Resistance: cli.LoadRes,
 	}
+
 	circ := NewCircuit(chargeCirc, load)
+
 	gr := graph.NewInfoPlotter(cli.Dpi)
 	PlotDiffFunc(ctx, gr, circ, NewThreeEighthInt)
 	gr.SaveToFile(cli.Filename)
@@ -52,10 +58,12 @@ func PlotSystem(ctx context.Context, gr *graph.InfoPlotter, circ *Circuit, newIn
 		left   = 0.0
 		right  = period
 	)
+
 	for right <= 60 {
 		int := newInt(left, right, cli.Step, func(t float64, x *Circuit) {
 			gr.AddPoint(t, x.GetLoadVoltage())
 		})
+		
 		int.Integrate(ctx, st)
 		st.ToggleStateMaybe()
 		left = right + cli.Step
@@ -76,6 +84,7 @@ func PlotDiffFunc(ctx context.Context, gr *graph.InfoPlotter, circ *Circuit, new
 		right  = period
 		theory = st.GetLoadVoltageFunc()
 	)
+	
 	for right <= 60 {
 		int := newInt(left, right, cli.Step, func(t float64, x *Circuit) {
 			vol := x.GetLoadVoltage()
@@ -86,6 +95,7 @@ func PlotDiffFunc(ctx context.Context, gr *graph.InfoPlotter, circ *Circuit, new
 			}
 			x.ToggleStateMaybe()
 		})
+
 		int.Integrate(ctx, st)
 		left = right + cli.Step
 		right += period
