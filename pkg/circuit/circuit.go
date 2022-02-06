@@ -13,7 +13,6 @@ type Circuit struct {
 	load              LoadComponents
 	state             circuitState
 	tau               []float64
-	stateChange       bool
 	voltagesCap       []float64
 }
 
@@ -29,7 +28,6 @@ func NewCircuit(chargeComp ChargeComponents, load LoadComponents) *Circuit {
 		load:              load,
 		state:             nil,
 		tau:               make([]float64, chargeComp.StagesCount),
-		stateChange:       true,
 		voltagesCap:       make([]float64, chargeComp.StagesCount),
 	}
 	for i := range circ.tau {
@@ -107,7 +105,6 @@ func (st *Circuit) Clone() *Circuit {
 		load:              load,
 		state:             nil,
 		tau:               st.tau,
-		stateChange:       false,
 		voltagesCap:       make([]float64, 0, st.stagesCount),
 	}
 	for _, capVol := range st.voltagesCap {
