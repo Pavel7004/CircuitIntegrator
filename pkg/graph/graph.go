@@ -16,23 +16,30 @@ import (
 )
 
 type InfoPlotter struct {
-	plot      *plot.Plot
-	dpi       int
-	lastPoint *plotter.XY
-	color     color.Color
+	plot       *plot.Plot
+	dpi        int
+	color      color.Color
+	points     plotter.XYs
+	bufferSize int
 }
 
-func NewInfoPlotter(dpi int) *InfoPlotter {
+func NewInfoPlotter(bufferSize, dpi int) *InfoPlotter {
 	p, err := plot.New()
 	if err != nil {
 		panic(err)
 	}
+	p.Add(plotter.NewGrid())
 	return &InfoPlotter{
-		plot:      p,
-		dpi:       dpi,
-		lastPoint: nil,
-		color:     nil,
+		plot:       p,
+		dpi:        dpi,
+		color:      nil,
+		points:     make(plotter.XYs, 0, bufferSize),
+		bufferSize: bufferSize,
 	}
+}
+
+func (ip *InfoPlotter) EnableLogScale() {
+	ip.plot.Y.Scale = plot.LogScale{}
 }
 
 func (ip *InfoPlotter) DrawInImage() image.Image {
@@ -53,8 +60,13 @@ func (ip *InfoPlotter) WriteSVGToStdout() {
 func (ip *InfoPlotter) SaveToFile(ctx context.Context, filename string) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "InfoPlotter.SaveToFile")
 	span.SetTag("filename", filename)
+	span.SetTag("buffer size", ip.bufferSize)
 
 	defer span.Finish()
+
+	if len(ip.points) != 0 {
+		ip.plotPoints()
+	}
 
 	if err := ip.plot.Save(4*vg.Inch, 4*vg.Inch, filename); err != nil {
 		panic(err)
@@ -62,7 +74,6 @@ func (ip *InfoPlotter) SaveToFile(ctx context.Context, filename string) {
 }
 
 func (ip *InfoPlotter) PrepareToAddNewPlot(color color.Color) {
-	ip.lastPoint = nil
 	ip.color = color
 }
 
@@ -74,17 +85,25 @@ func (ip *InfoPlotter) PlotFunc(color color.Color, fn func(x float64) float64) {
 	ip.plot.Add(pFn)
 }
 
-func (ip *InfoPlotter) AddPoint(x, y float64) {
-	point := &plotter.XY{X: x, Y: y}
-	if ip.lastPoint != nil {
-		l, err := plotter.NewLine(plotter.XYs{*ip.lastPoint, *point})
-		if err != nil {
-			panic(err)
-		}
-		if ip.color != nil {
-			l.Color = ip.color
-		}
-		ip.plot.Add(l)
+func (ip *InfoPlotter) plotPoints() {
+	l, err := plotter.NewLine(ip.points)
+	if err != nil {
+		panic(err)
 	}
-	ip.lastPoint = point
+
+	l.LineStyle.Width = vg.Points(1)
+	l.LineStyle.Color = ip.color
+	ip.plot.Add(l)
+
+	lastPoint := ip.points[len(ip.points)-1]
+	ip.points = make(plotter.XYs, 0, ip.bufferSize)
+	ip.points = append(ip.points, lastPoint)
+}
+
+func (ip *InfoPlotter) AddPoint(x, y float64) {
+	ip.points = append(ip.points, plotter.XY{X: x, Y: y})
+
+	if len(ip.points) == ip.bufferSize {
+		ip.plotPoints()
+	}
 }
