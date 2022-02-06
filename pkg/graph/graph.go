@@ -75,8 +75,12 @@ func (ip *InfoPlotter) SaveToFile(ctx context.Context, filename string) {
 	}
 }
 
-func (ip *InfoPlotter) PrepareToAddNewPlot(color color.Color) {
+func (ip *InfoPlotter) SetPlotColor(color color.Color) {
 	ip.color = color
+}
+
+func (ip *InfoPlotter) SetYLabel(label string) {
+	ip.plot.Y.Label.Text = label
 }
 
 func (ip *InfoPlotter) PlotFunc(color color.Color, fn func(x float64) float64) {

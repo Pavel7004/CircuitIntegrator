@@ -85,6 +85,7 @@ func PlotDiffFunc(ctx context.Context, gr *graph.InfoPlotter, circ *Circuit, new
 		theory = st.GetLoadVoltageFunc()
 	)
 
+	gr.SetYLabel("x(t), %")
 	for right <= 60 {
 		int := newInt(left, right, cli.Step, func(t float64, x *Circuit) {
 			vol := x.GetLoadVoltage()
