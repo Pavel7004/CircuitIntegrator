@@ -1,10 +1,12 @@
 package graph
 
 import (
+	"context"
 	"image"
 	"image/color"
 	"os"
 
+	"github.com/opentracing/opentracing-go"
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
 	"gonum.org/v1/plot/vg"
@@ -48,7 +50,12 @@ func (ip *InfoPlotter) WriteSVGToStdout() {
 	}
 }
 
-func (ip *InfoPlotter) SaveToFile(filename string) {
+func (ip *InfoPlotter) SaveToFile(ctx context.Context, filename string) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "InfoPlotter.SaveToFile")
+	span.SetTag("filename", filename)
+
+	defer span.Finish()
+
 	if err := ip.plot.Save(4*vg.Inch, 4*vg.Inch, filename); err != nil {
 		panic(err)
 	}

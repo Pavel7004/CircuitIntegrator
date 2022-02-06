@@ -48,7 +48,7 @@ func main() {
 
 	gr := graph.NewInfoPlotter(cli.Dpi)
 	PlotDiffFunc(ctx, gr, circ, NewThreeEighthInt)
-	gr.SaveToFile(cli.Filename)
+	gr.SaveToFile(ctx, cli.Filename)
 }
 
 func PlotSystem(ctx context.Context, gr *graph.InfoPlotter, circ *Circuit, newInt integrator.NewIntFunc) {
@@ -63,7 +63,7 @@ func PlotSystem(ctx context.Context, gr *graph.InfoPlotter, circ *Circuit, newIn
 		int := newInt(left, right, cli.Step, func(t float64, x *Circuit) {
 			gr.AddPoint(t, x.GetLoadVoltage())
 		})
-		
+
 		int.Integrate(ctx, st)
 		st.ToggleStateMaybe()
 		left = right + cli.Step
@@ -84,7 +84,7 @@ func PlotDiffFunc(ctx context.Context, gr *graph.InfoPlotter, circ *Circuit, new
 		right  = period
 		theory = st.GetLoadVoltageFunc()
 	)
-	
+
 	for right <= 60 {
 		int := newInt(left, right, cli.Step, func(t float64, x *Circuit) {
 			vol := x.GetLoadVoltage()
