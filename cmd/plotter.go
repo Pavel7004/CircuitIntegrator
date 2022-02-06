@@ -45,7 +45,8 @@ func main() {
 
 	circ := NewCircuit(chargeCirc, load)
 
-	gr := graph.NewInfoPlotter(cli.Dpi)
+	gr := graph.NewInfoPlotter(cli.PointBuffSize, cli.Dpi)
+	// PlotTheory(ctx, gr, circ)
 	PlotDiffFunc(ctx, gr, circ, NewThreeEighthInt)
 	gr.SaveToFile(ctx, cli.Filename)
 }
