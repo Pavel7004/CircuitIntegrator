@@ -1,8 +1,11 @@
 package midpointimplicit
 
 import (
+	"context"
+
 	"github.com/Pavel7004/GraphPlot/pkg/circuit"
 	"github.com/Pavel7004/GraphPlot/pkg/integrator"
+	"github.com/opentracing/opentracing-go"
 )
 
 type MidpointImpInt struct {
@@ -23,7 +26,15 @@ func NewMidpointImplInt(begin, end, step float64, saveFn func(t float64, x *circ
 	}
 }
 
-func (si *MidpointImpInt) Integrate(circ *circuit.Circuit) {
+func (si *MidpointImpInt) Integrate(ctx context.Context, circ *circuit.Circuit) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "MidpointImpInt.Integrate")
+	span.SetTag("StartPoint", si.begin)
+	span.SetTag("EndPoint", si.end)
+	span.SetTag("Step", si.step)
+	span.SetTag("RK-stages", 2)
+
+	defer span.Finish()
+
 	var (
 		t         = si.begin
 		prevDeriv = si.GetDerivativeWithCoeff(circ.GetDerivative(), 1.0/2)
