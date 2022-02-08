@@ -37,6 +37,7 @@ func main() {
 		Resistance:        5000,
 		StagesCount:       cli.CapCount,
 		GapTriggerVoltage: 5700,
+		HoldingVoltage:    1,
 	}
 
 	load := LoadComponents{

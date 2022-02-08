@@ -10,6 +10,7 @@ type Circuit struct {
 	resistance        float64
 	stagesCount       uint
 	gapTriggerVoltage float64
+	holdingVoltage    float64
 	load              LoadComponents
 	state             circuitState
 	tau               []float64
@@ -25,6 +26,7 @@ func NewCircuit(chargeComp ChargeComponents, load LoadComponents) *Circuit {
 		resistance:        chargeComp.Resistance,
 		stagesCount:       chargeComp.StagesCount,
 		gapTriggerVoltage: chargeComp.GapTriggerVoltage,
+		holdingVoltage:    chargeComp.HoldingVoltage,
 		load:              load,
 		state:             nil,
 		tau:               make([]float64, chargeComp.StagesCount),
@@ -102,6 +104,7 @@ func (st *Circuit) Clone() *Circuit {
 		resistance:        st.resistance,
 		stagesCount:       st.stagesCount,
 		gapTriggerVoltage: st.gapTriggerVoltage,
+		holdingVoltage:    st.holdingVoltage,
 		load:              load,
 		state:             nil,
 		tau:               st.tau,

@@ -6,6 +6,7 @@ type ChargeComponents struct {
 	Resistance        float64
 	StagesCount       uint
 	GapTriggerVoltage float64
+	HoldingVoltage    float64
 }
 
 type LoadComponents struct {
