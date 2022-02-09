@@ -66,7 +66,7 @@ func PlotSystem(ctx context.Context, gr *graph.InfoPlotter, circ *Circuit, newIn
 		})
 
 		int.Integrate(ctx, st)
-		st.ToggleStateMaybe()
+		st.ToggleState()
 		left = right
 		right += period
 	}
@@ -98,7 +98,7 @@ func PlotDiffFunc(ctx context.Context, gr *graph.InfoPlotter, circ *Circuit, new
 		})
 
 		int.Integrate(ctx, st)
-		st.ToggleStateMaybe()
+		st.ToggleState()
 		left = right
 		right += period
 	}

@@ -43,7 +43,7 @@ func (st *Circuit) GetDerivative() []float64 {
 	return st.state.GetDerivative()
 }
 
-func (st *Circuit) ToggleStateMaybe() {
+func (st *Circuit) ToggleState() {
 	st.state.ChangeState()
 }
 
