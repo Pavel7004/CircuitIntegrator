@@ -151,3 +151,6 @@ f(x_{i}) = -1/\tau_{i} * x_{i}
 
 ** Оценка относительной ошибки явного метода 3/8
 [[./misc/three-eighth-theory-differr.png]]
+
+** График зарядки-разрядки системы
+[[./misc/three-eighth-multiCycle.png]]

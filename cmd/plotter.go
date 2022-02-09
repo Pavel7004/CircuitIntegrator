@@ -48,7 +48,7 @@ func main() {
 
 	gr := graph.NewInfoPlotter(cli.PointBuffSize, cli.Dpi)
 	// PlotTheory(ctx, gr, circ)
-	PlotDiffFunc(ctx, gr, circ, NewThreeEighthInt)
+	PlotSystem(ctx, gr, circ, NewThreeEighthInt)
 	gr.SaveToFile(ctx, cli.Filename)
 }
 
@@ -60,7 +60,7 @@ func PlotSystem(ctx context.Context, gr *graph.InfoPlotter, circ *Circuit, newIn
 		right  = period
 	)
 
-	for right <= 60 {
+	for right <= 200 {
 		int := newInt(left, right, cli.Step, func(t float64, x *Circuit) {
 			gr.AddPoint(t, x.GetLoadVoltage())
 		})
