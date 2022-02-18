@@ -9,9 +9,12 @@ all: build
 build:
 	go build ./cmd/plotter.go
 
+jaeger:
+	docker run -d -p 6831:6831/udp -p 16686:16686 jaegertracing/all-in-one:latest
+
 clear:
 	rm -rf plotter results/*.png */__debug_bin __debug_bin results
 
-.PHONY: all clear
+.PHONY: all clear jaeger
 
 # end
