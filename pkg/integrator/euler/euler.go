@@ -1,8 +1,12 @@
 package euler
 
 import (
+	"context"
+
 	"github.com/Pavel7004/GraphPlot/pkg/circuit"
+	"github.com/Pavel7004/GraphPlot/pkg/common"
 	"github.com/Pavel7004/GraphPlot/pkg/integrator"
+	"github.com/opentracing/opentracing-go"
 )
 
 type EulerInt struct {
@@ -23,16 +27,26 @@ func NewEulerInt(begin, end, step float64, saveFn func(t float64, x *circuit.Cir
 	}
 }
 
-func (ei *EulerInt) Integrate(circ *circuit.Circuit) {
+func (ei *EulerInt) Integrate(ctx context.Context, circ *circuit.Circuit) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, common.GetFuncName())
+	span.SetTag("StartPoint", ei.begin)
+	span.SetTag("EndPoint", ei.end)
+	span.SetTag("Step", ei.step)
+	span.SetTag("RK-stages", 1)
+
+	defer span.Finish()
+
 	var (
 		t    = ei.begin
 		last bool
 	)
+
 	for !last {
 		if t+ei.step > ei.end {
 			last = true
 			ei.step = ei.end - t
 		}
+
 		circ.ApplyDerivative(ei.step, circ.GetDerivative())
 		t += ei.step
 		ei.saveFn(t, circ)
