@@ -41,6 +41,9 @@ func Run(ctx context.Context, circ *circuit.Circuit, folderName string, buffSize
 }
 
 func PlotSystem(ctx context.Context, gr *graph.InfoPlotter, circ *circuit.Circuit, newInt integrator.NewIntFunc) {
+	span, ctx := tracing.StartSpanFromContext(ctx)
+	defer span.Finish()
+
 	var (
 		st     = circ.Clone()
 		period = st.GetSystemPeriod()
@@ -61,11 +64,17 @@ func PlotSystem(ctx context.Context, gr *graph.InfoPlotter, circ *circuit.Circui
 }
 
 func PlotTheory(ctx context.Context, gr *graph.InfoPlotter, circ *circuit.Circuit) {
+	span, ctx := tracing.StartSpanFromContext(ctx)
+	defer span.Finish()
+
 	st := circ.Clone()
 	gr.PlotFunc(color.RGBA{R: 255, A: 255}, st.GetLoadVoltageFunc())
 }
 
 func PlotDiffFunc(ctx context.Context, gr *graph.InfoPlotter, circ *circuit.Circuit, newInt integrator.NewIntFunc) {
+	span, ctx := tracing.StartSpanFromContext(ctx)
+	defer span.Finish()
+
 	var (
 		st     = circ.Clone()
 		period = st.GetSystemPeriod()
