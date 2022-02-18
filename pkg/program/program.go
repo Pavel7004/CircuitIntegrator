@@ -45,6 +45,13 @@ func Run(ctx context.Context, circ *circuit.Circuit, folderName string, buffSize
 		gr.SaveToFile(ctx, path.Join(folderName, runtime.GetFuncModule(int)+"_theory.png"))
 	}
 
+	for _, int := range integrators {
+		gr := graph.NewInfoPlotter(buffSize, dpi)
+
+		PlotDiffFunc(ctx, gr, circ, int)
+
+		gr.SaveToFile(ctx, path.Join(folderName, runtime.GetFuncModule(int)+"_diffErr.png"))
+	}
 }
 
 func PlotSystem(ctx context.Context, gr *graph.InfoPlotter, circ *circuit.Circuit, newInt integrator.NewIntFunc) {
