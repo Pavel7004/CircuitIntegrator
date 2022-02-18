@@ -4,9 +4,8 @@ import (
 	"context"
 
 	"github.com/Pavel7004/GraphPlot/pkg/circuit"
-	"github.com/Pavel7004/GraphPlot/pkg/common"
+	"github.com/Pavel7004/GraphPlot/pkg/common/tracing"
 	"github.com/Pavel7004/GraphPlot/pkg/integrator"
-	"github.com/opentracing/opentracing-go"
 )
 
 type ShapinInt struct {
@@ -28,7 +27,7 @@ func NewShampinInt(begin, end, step float64, saveFn func(t float64, x *circuit.C
 }
 
 func (si *ShapinInt) Integrate(ctx context.Context, circ *circuit.Circuit) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, common.GetFuncName())
+	span, ctx := tracing.StartSpanFromContext(ctx)
 	span.SetTag("StartPoint", si.begin)
 	span.SetTag("EndPoint", si.end)
 	span.SetTag("Step", si.step)

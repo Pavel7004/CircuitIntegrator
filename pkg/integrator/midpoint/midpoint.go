@@ -4,9 +4,8 @@ import (
 	"context"
 
 	"github.com/Pavel7004/GraphPlot/pkg/circuit"
-	"github.com/Pavel7004/GraphPlot/pkg/common"
+	"github.com/Pavel7004/GraphPlot/pkg/common/tracing"
 	"github.com/Pavel7004/GraphPlot/pkg/integrator"
-	"github.com/opentracing/opentracing-go"
 )
 
 type MidpointInt struct {
@@ -28,7 +27,7 @@ func NewMidpointInt(begin, end, step float64, saveFn func(t float64, x *circuit.
 }
 
 func (mi *MidpointInt) Integrate(ctx context.Context, circ *circuit.Circuit) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, common.GetFuncName())
+	span, ctx := tracing.StartSpanFromContext(ctx)
 	span.SetTag("StartPoint", mi.begin)
 	span.SetTag("EndPoint", mi.end)
 	span.SetTag("Step", mi.step)

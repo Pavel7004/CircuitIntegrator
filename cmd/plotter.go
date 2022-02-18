@@ -6,8 +6,7 @@ import (
 
 	. "github.com/Pavel7004/GraphPlot/pkg/circuit"
 	"github.com/Pavel7004/GraphPlot/pkg/cli"
-	"github.com/Pavel7004/GraphPlot/pkg/common"
-	"github.com/Pavel7004/GraphPlot/pkg/graph"
+	"github.com/Pavel7004/GraphPlot/pkg/common/tracing"
 	"github.com/Pavel7004/GraphPlot/pkg/program"
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/uber/jaeger-client-go"
@@ -20,11 +19,11 @@ func main() {
 	closer := InitTracing()
 	defer closer.Close()
 
-	span, ctx := opentracing.StartSpanFromContext(context.Background(), common.GetFuncName())
+	span, ctx := tracing.StartSpanFromContext(context.Background())
 	span.SetTag("Step", cli.Step)
 	span.SetTag("NumberOfCapacitors", cli.CapCount)
 	span.SetTag("Dpi", cli.Dpi)
-	span.SetTag("Filename", cli.Filename)
+	span.SetTag("Filename", cli.DirName)
 
 	defer span.Finish()
 

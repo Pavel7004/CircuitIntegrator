@@ -1,4 +1,4 @@
-package common
+package tracing
 
 import "testing"
 
@@ -14,7 +14,7 @@ func TestGetFuncName(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GetFuncName(); got != tt.want {
+			if got := getFuncName(); got != tt.want {
 				t.Errorf("GetFuncName() = %v, want %v", got, tt.want)
 			}
 		})
