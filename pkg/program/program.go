@@ -52,6 +52,15 @@ func Run(ctx context.Context, circ *circuit.Circuit, folderName string, buffSize
 
 		gr.SaveToFile(ctx, path.Join(folderName, runtime.GetFuncModule(int)+"_diffErr.png"))
 	}
+
+	for _, int := range integrators {
+		gr := graph.NewInfoPlotter(buffSize, dpi)
+
+		ctx := context.WithValue(ctx, "end", 100.0)
+		PlotSystem(ctx, gr, circ, int)
+
+		gr.SaveToFile(ctx, path.Join(folderName, runtime.GetFuncModule(int)+"_multiTicks.png"))
+	}
 }
 
 func PlotSystem(ctx context.Context, gr *graph.InfoPlotter, circ *circuit.Circuit, newInt integrator.NewIntFunc) {
