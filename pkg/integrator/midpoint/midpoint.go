@@ -1,8 +1,12 @@
 package midpoint
 
 import (
+	"context"
+
 	"github.com/Pavel7004/GraphPlot/pkg/circuit"
+	"github.com/Pavel7004/GraphPlot/pkg/common"
 	"github.com/Pavel7004/GraphPlot/pkg/integrator"
+	"github.com/opentracing/opentracing-go"
 )
 
 type MidpointInt struct {
@@ -23,16 +27,26 @@ func NewMidpointInt(begin, end, step float64, saveFn func(t float64, x *circuit.
 	}
 }
 
-func (mi *MidpointInt) Integrate(circ *circuit.Circuit) {
+func (mi *MidpointInt) Integrate(ctx context.Context, circ *circuit.Circuit) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, common.GetFuncName())
+	span.SetTag("StartPoint", mi.begin)
+	span.SetTag("EndPoint", mi.end)
+	span.SetTag("Step", mi.step)
+	span.SetTag("RK-stages", 2)
+
+	defer span.Finish()
+
 	var (
 		t    = mi.begin
 		last bool
 	)
+
 	for !last {
 		if t+mi.step > mi.end {
 			last = true
 			mi.step = mi.end - t
 		}
+
 		k1 := circ.Clone()
 		k1.ApplyDerivative(mi.step/2, k1.GetDerivative())
 		circ.ApplyDerivative(mi.step, k1.GetDerivative())
