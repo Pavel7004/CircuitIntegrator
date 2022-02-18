@@ -51,7 +51,7 @@ func PlotSystem(ctx context.Context, gr *graph.InfoPlotter, circ *circuit.Circui
 		right  = period
 	)
 
-	for right <= 200 {
+	for right <= 60 {
 		int := newInt(left, right, cli.Step, func(t float64, x *circuit.Circuit) {
 			gr.AddPoint(t, x.GetLoadVoltage())
 		})
