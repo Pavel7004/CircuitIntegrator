@@ -32,6 +32,10 @@ func Run(ctx context.Context, circ *circuit.Circuit, folderName string, buffSize
 		threeeighth.NewThreeEighthInt,
 	}
 
+	if err := os.MkdirAll(folderName, os.ModePerm); err != nil {
+		panic(err)
+	}
+
 	for _, int := range integrators {
 		gr := graph.NewInfoPlotter(buffSize, dpi)
 

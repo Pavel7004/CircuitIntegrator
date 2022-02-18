@@ -42,7 +42,7 @@ func main() {
 
 	circ := NewCircuit(chargeCirc, load)
 
-	program.Run(ctx, circ, cli.PointBuffSize, cli.Dpi)
+	program.Run(ctx, circ, cli.DirName, cli.PointBuffSize, cli.Dpi)
 }
 
 func InitTracing() io.Closer {
