@@ -10,7 +10,7 @@ build:
 	go build ./cmd/plotter.go
 
 clear:
-	rm -rf plotter *.png __debug_bin
+	rm -rf plotter results/*.png */__debug_bin __debug_bin results
 
 .PHONY: all clear
 
