@@ -4,26 +4,25 @@ import (
 	"context"
 	"image/color"
 	"math"
+	"os"
+	"path"
 
 	"github.com/Pavel7004/GraphPlot/pkg/circuit"
 	"github.com/Pavel7004/GraphPlot/pkg/cli"
-	"github.com/Pavel7004/GraphPlot/pkg/common"
+	"github.com/Pavel7004/GraphPlot/pkg/common/runtime"
+	"github.com/Pavel7004/GraphPlot/pkg/common/tracing"
 	"github.com/Pavel7004/GraphPlot/pkg/graph"
 	"github.com/Pavel7004/GraphPlot/pkg/integrator"
-	"github.com/Pavel7004/GraphPlot/pkg/integrator/bogatskiy-Shampin"
+	bogatskiyshampin "github.com/Pavel7004/GraphPlot/pkg/integrator/bogatskiy-Shampin"
 	"github.com/Pavel7004/GraphPlot/pkg/integrator/euler"
 	"github.com/Pavel7004/GraphPlot/pkg/integrator/midpoint"
-	"github.com/Pavel7004/GraphPlot/pkg/integrator/midpoint-implicit"
-	"github.com/Pavel7004/GraphPlot/pkg/integrator/three-eighth"
-	"github.com/opentracing/opentracing-go"
+	midpointimplicit "github.com/Pavel7004/GraphPlot/pkg/integrator/midpoint-implicit"
+	threeeighth "github.com/Pavel7004/GraphPlot/pkg/integrator/three-eighth"
 )
 
-func Run(ctx context.Context, circ *circuit.Circuit, buffSize, dpi int) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, common.GetFuncName())
-
+func Run(ctx context.Context, circ *circuit.Circuit, folderName string, buffSize, dpi int) {
+	span, ctx := tracing.StartSpanFromContext(ctx)
 	defer span.Finish()
-
-	gr := graph.NewInfoPlotter(buffSize, dpi)
 
 	integrators := []integrator.NewIntFunc{
 		euler.NewEulerInt,
