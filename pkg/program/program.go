@@ -33,11 +33,14 @@ func Run(ctx context.Context, circ *circuit.Circuit, folderName string, buffSize
 	}
 
 	for _, int := range integrators {
+		gr := graph.NewInfoPlotter(buffSize, dpi)
+
 		PlotSystem(ctx, gr, circ, int)
 		PlotTheory(ctx, gr, circ)
+
+		gr.SaveToFile(ctx, path.Join(folderName, runtime.GetFuncModule(int)+"_theory.png"))
 	}
 
-	gr.SaveToFile(ctx, cli.Filename)
 }
 
 func PlotSystem(ctx context.Context, gr *graph.InfoPlotter, circ *circuit.Circuit, newInt integrator.NewIntFunc) {
