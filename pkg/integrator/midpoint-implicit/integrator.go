@@ -40,15 +40,19 @@ func (si *MidpointImpInt) Integrate(ctx context.Context, circ *circuit.Circuit) 
 		prevDeriv = si.GetDerivativeWithCoeff(circ.GetDerivative(), 1.0/2)
 		last      bool
 	)
+
 	for !last {
 		if t+si.step > si.end {
 			last = true
 			si.step = si.end - t
 		}
+
 		currDeriv := si.GetDerivativeWithCoeff(circ.GetDerivative(), 1.0/2)
 		k1 := si.GetSumOfDerivatives(currDeriv, prevDeriv)
 		prevDeriv = currDeriv
+
 		circ.ApplyDerivative(si.step, k1)
+
 		t += si.step
 		si.saveFn(t, circ)
 	}
