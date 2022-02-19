@@ -39,7 +39,7 @@ func NewCircuit(chargeComp ChargeComponents, load LoadComponents) *Circuit {
 	return circ
 }
 
-func (st *Circuit) GetDerivative() []float64 {
+func (st *Circuit) GetDerivative() *Derivative {
 	return st.state.GetDerivative()
 }
 
@@ -47,9 +47,9 @@ func (st *Circuit) ToggleState() {
 	st.state.ChangeState()
 }
 
-func (st *Circuit) ApplyDerivative(h float64, derivative []float64) {
+func (st *Circuit) ApplyDerivative(h float64, d *Derivative) {
 	for i := range st.voltagesCap {
-		st.voltagesCap[i] += h * derivative[i]
+		st.voltagesCap[i] += h * d.capVolts[i]
 	}
 }
 

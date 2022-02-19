@@ -12,14 +12,14 @@ func newDischargingState(circ *Circuit) *dischargingState {
 	}
 }
 
-func (s *dischargingState) GetDerivative() []float64 {
-	var (
-		derivative = make([]float64, 0, s.circ.stagesCount)
-	)
+func (s *dischargingState) GetDerivative() *Derivative {
+	capVolts := make([]float64, 0, s.circ.stagesCount)
 	for _, capVol := range s.circ.voltagesCap {
-		derivative = append(derivative, -capVol/s.circ.load.tau)
+		capVolts = append(capVolts, -capVol/s.circ.load.tau)
 	}
-	return derivative
+	return &Derivative{
+		capVolts: capVolts,
+	}
 }
 
 func (s *dischargingState) Clone(newCirc *Circuit) circuitState {
