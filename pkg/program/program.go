@@ -8,7 +8,6 @@ import (
 	"path"
 
 	"github.com/Pavel7004/GraphPlot/pkg/circuit"
-	"github.com/Pavel7004/GraphPlot/pkg/cli"
 	misc "github.com/Pavel7004/GraphPlot/pkg/common/misc"
 	"github.com/Pavel7004/GraphPlot/pkg/common/tracing"
 	"github.com/Pavel7004/GraphPlot/pkg/graph"
@@ -21,7 +20,7 @@ import (
 	"github.com/Pavel7004/GraphPlot/pkg/integrator/trapeziod"
 )
 
-func Run(ctx context.Context, circ *circuit.Circuit, folderName string, buffSize, dpi int) {
+func Run(ctx context.Context, circ *circuit.Circuit, step float64, folderName string, buffSize, dpi int) {
 	span, ctx := tracing.StartSpanFromContext(ctx)
 	defer span.Finish()
 
@@ -41,7 +40,7 @@ func Run(ctx context.Context, circ *circuit.Circuit, folderName string, buffSize
 	for _, int := range integrators {
 		gr := graph.NewInfoPlotter(buffSize, dpi)
 
-		PlotSystem(ctx, gr, circ, int)
+		PlotSystem(ctx, gr, circ, step, int)
 		PlotTheory(ctx, gr, circ)
 
 		gr.SaveToFile(ctx, path.Join(folderName, misc.GetFuncModule(int)+"_theory.png"))
@@ -50,7 +49,7 @@ func Run(ctx context.Context, circ *circuit.Circuit, folderName string, buffSize
 	for _, int := range integrators {
 		gr := graph.NewInfoPlotter(buffSize, dpi)
 
-		PlotDiffFunc(ctx, gr, circ, int)
+		PlotDiffFunc(ctx, gr, circ, step, int)
 
 		gr.SaveToFile(ctx, path.Join(folderName, misc.GetFuncModule(int)+"_diffErr.png"))
 	}
@@ -59,13 +58,13 @@ func Run(ctx context.Context, circ *circuit.Circuit, folderName string, buffSize
 		gr := graph.NewInfoPlotter(buffSize, dpi)
 
 		ctx := context.WithValue(ctx, "end", 200.0)
-		PlotSystem(ctx, gr, circ, int)
+		PlotSystem(ctx, gr, circ, step, int)
 
 		gr.SaveToFile(ctx, path.Join(folderName, misc.GetFuncModule(int)+"_multiTicks.png"))
 	}
 }
 
-func PlotSystem(ctx context.Context, gr *graph.InfoPlotter, circ *circuit.Circuit, newInt integrator.NewIntFunc) {
+func PlotSystem(ctx context.Context, gr *graph.InfoPlotter, circ *circuit.Circuit, step float64, newInt integrator.NewIntFunc) {
 	span, ctx := tracing.StartSpanFromContext(ctx)
 	defer span.Finish()
 
@@ -81,7 +80,7 @@ func PlotSystem(ctx context.Context, gr *graph.InfoPlotter, circ *circuit.Circui
 	}
 
 	for left <= right {
-		int := newInt(left, right, cli.Step, func(t float64, x *circuit.Circuit) {
+		int := newInt(left, right, step, func(t float64, x *circuit.Circuit) {
 			gr.AddPoint(t, x.GetLoadVoltage())
 		})
 
@@ -99,7 +98,7 @@ func PlotTheory(ctx context.Context, gr *graph.InfoPlotter, circ *circuit.Circui
 	gr.PlotFunc(color.RGBA{R: 255, A: 255}, st.GetLoadVoltageFunc())
 }
 
-func PlotDiffFunc(ctx context.Context, gr *graph.InfoPlotter, circ *circuit.Circuit, newInt integrator.NewIntFunc) {
+func PlotDiffFunc(ctx context.Context, gr *graph.InfoPlotter, circ *circuit.Circuit, step float64, newInt integrator.NewIntFunc) {
 	span, ctx := tracing.StartSpanFromContext(ctx)
 	defer span.Finish()
 
@@ -112,7 +111,7 @@ func PlotDiffFunc(ctx context.Context, gr *graph.InfoPlotter, circ *circuit.Circ
 
 	gr.SetYLabel("x(t), %")
 	for left <= right {
-		int := newInt(left, right, cli.Step, func(t float64, x *circuit.Circuit) {
+		int := newInt(left, right, step, func(t float64, x *circuit.Circuit) {
 			vol := x.GetLoadVoltage()
 			if vol < 0.0001 {
 				gr.AddPoint(t, 0.0)
