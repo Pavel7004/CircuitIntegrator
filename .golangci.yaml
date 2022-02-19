@@ -21,3 +21,4 @@ linters:
     - prealloc
     - gofmt
     - goimports
+    - funlen
