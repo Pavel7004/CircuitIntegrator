@@ -70,24 +70,22 @@ func PlotSystem(ctx context.Context, gr *graph.InfoPlotter, circ *circuit.Circui
 	defer span.Finish()
 
 	var (
-		st     = circ.Clone()
-		period = st.GetSystemPeriod()
-		left   = 0.0
-		right  = period
+		st    = circ.Clone()
+		left  = 0.0
+		right float64
 	)
 
-	end, ok := ctx.Value("end").(float64)
+	right, ok := ctx.Value("end").(float64)
 	if !ok {
-		end = 60
+		right = 60
 	}
 
-	for right <= end {
+	for left <= right {
 		int := newInt(left, right, cli.Step, func(t float64, x *circuit.Circuit) {
 			gr.AddPoint(t, x.GetLoadVoltage())
 		})
 
 		left = int.Integrate(ctx, st)
-		right += period
 
 		st.ToggleState()
 	}
@@ -107,14 +105,13 @@ func PlotDiffFunc(ctx context.Context, gr *graph.InfoPlotter, circ *circuit.Circ
 
 	var (
 		st     = circ.Clone()
-		period = st.GetSystemPeriod()
-		left   = 0.0
-		right  = period
 		theory = st.GetLoadVoltageFunc()
+		left   = 0.0
+		right  float64
 	)
 
 	gr.SetYLabel("x(t), %")
-	for right <= 60 {
+	for left <= right {
 		int := newInt(left, right, cli.Step, func(t float64, x *circuit.Circuit) {
 			vol := x.GetLoadVoltage()
 			if vol < 0.0001 {
@@ -125,7 +122,6 @@ func PlotDiffFunc(ctx context.Context, gr *graph.InfoPlotter, circ *circuit.Circ
 		})
 
 		left = int.Integrate(ctx, st)
-		right += period
 
 		st.ToggleState()
 	}
