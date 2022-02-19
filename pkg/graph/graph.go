@@ -28,9 +28,11 @@ func NewInfoPlotter(bufferSize, dpi int) *InfoPlotter {
 	if err != nil {
 		panic(err)
 	}
+
 	p.Add(plotter.NewGrid())
 	p.X.Label.Text = "t"
 	p.Y.Label.Text = "x(t)"
+
 	return &InfoPlotter{
 		plot:       p,
 		dpi:        dpi,
@@ -48,11 +50,13 @@ func (ip *InfoPlotter) DrawInImage() image.Image {
 	img := image.NewRGBA(image.Rect(0, 0, 16*ip.dpi, 16*ip.dpi))
 	c := vgimg.NewWith(vgimg.UseImage(img))
 	ip.plot.Draw(draw.New(c))
+
 	return c.Image()
 }
 
 func (ip *InfoPlotter) WriteSVGToStdout() {
 	c := vgsvg.New(3*vg.Inch, 3*vg.Inch)
+
 	ip.plot.Draw(draw.New(c))
 	if _, err := c.WriteTo(os.Stdout); err != nil {
 		panic(err)
@@ -85,9 +89,11 @@ func (ip *InfoPlotter) SetYLabel(label string) {
 
 func (ip *InfoPlotter) PlotFunc(color color.Color, fn func(x float64) float64) {
 	pFn := plotter.NewFunction(fn)
+
 	pFn.Color = color
 	pFn.Width = vg.Points(1)
 	pFn.Samples = 200
+
 	ip.plot.Add(pFn)
 }
 
