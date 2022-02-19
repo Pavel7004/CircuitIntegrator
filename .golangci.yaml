@@ -3,6 +3,7 @@ run:
   fix: true
   skip-dirs:
     - vendor
+    - misc
 linters:
   disable-all: true
   enable:
