@@ -26,7 +26,7 @@ func NewEulerInt(begin, end, step float64, saveFn func(t float64, x *circuit.Cir
 	}
 }
 
-func (ei *EulerInt) Integrate(ctx context.Context, circ *circuit.Circuit) {
+func (ei *EulerInt) Integrate(ctx context.Context, circ *circuit.Circuit) float64 {
 	span, ctx := tracing.StartSpanFromContext(ctx)
 	span.SetTag("StartPoint", ei.begin)
 	span.SetTag("EndPoint", ei.end)
@@ -50,4 +50,6 @@ func (ei *EulerInt) Integrate(ctx context.Context, circ *circuit.Circuit) {
 		t += ei.step
 		ei.saveFn(t, circ)
 	}
+
+	return t
 }

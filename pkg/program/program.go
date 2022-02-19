@@ -86,10 +86,10 @@ func PlotSystem(ctx context.Context, gr *graph.InfoPlotter, circ *circuit.Circui
 			gr.AddPoint(t, x.GetLoadVoltage())
 		})
 
-		int.Integrate(ctx, st)
-		st.ToggleState()
-		left = right
+		left = int.Integrate(ctx, st)
 		right += period
+
+		st.ToggleState()
 	}
 }
 
@@ -124,9 +124,9 @@ func PlotDiffFunc(ctx context.Context, gr *graph.InfoPlotter, circ *circuit.Circ
 			}
 		})
 
-		int.Integrate(ctx, st)
-		st.ToggleState()
-		left = right
+		left = int.Integrate(ctx, st)
 		right += period
+
+		st.ToggleState()
 	}
 }

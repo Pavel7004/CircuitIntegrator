@@ -26,7 +26,7 @@ func NewShampinInt(begin, end, step float64, saveFn func(t float64, x *circuit.C
 	}
 }
 
-func (si *ShapinInt) Integrate(ctx context.Context, circ *circuit.Circuit) {
+func (si *ShapinInt) Integrate(ctx context.Context, circ *circuit.Circuit) float64 {
 	span, ctx := tracing.StartSpanFromContext(ctx)
 	span.SetTag("StartPoint", si.begin)
 	span.SetTag("EndPoint", si.end)
@@ -59,4 +59,6 @@ func (si *ShapinInt) Integrate(ctx context.Context, circ *circuit.Circuit) {
 		t += si.step
 		si.saveFn(t, circ)
 	}
+
+	return t
 }

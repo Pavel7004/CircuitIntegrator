@@ -26,7 +26,7 @@ func NewTrapezoidInt(begin, end, step float64, saveFn func(t float64, x *circuit
 	}
 }
 
-func (si *TrapezoidInt) Integrate(ctx context.Context, circ *circuit.Circuit) {
+func (si *TrapezoidInt) Integrate(ctx context.Context, circ *circuit.Circuit) float64 {
 	span, ctx := tracing.StartSpanFromContext(ctx)
 	span.SetTag("StartPoint", si.begin)
 	span.SetTag("EndPoint", si.end)
@@ -59,4 +59,6 @@ func (si *TrapezoidInt) Integrate(ctx context.Context, circ *circuit.Circuit) {
 		t += si.step
 		si.saveFn(t, circ)
 	}
+
+	return t
 }

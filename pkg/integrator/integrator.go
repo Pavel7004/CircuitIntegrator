@@ -9,5 +9,5 @@ import (
 type NewIntFunc func(begin, end float64, step float64, saveFn func(t float64, x *circuit.Circuit)) Integrator
 
 type Integrator interface {
-	Integrate(ctx context.Context, st *circuit.Circuit)
+	Integrate(ctx context.Context, st *circuit.Circuit) float64
 }
