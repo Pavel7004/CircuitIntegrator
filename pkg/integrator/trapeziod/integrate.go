@@ -17,7 +17,7 @@ type TrapezoidInt struct {
 
 var _ integrator.Integrator = (*TrapezoidInt)(nil)
 
-func NewThreeEighthInt(begin, end, step float64, saveFn func(t float64, x *circuit.Circuit)) integrator.Integrator {
+func NewTrapezoidInt(begin, end, step float64, saveFn func(t float64, x *circuit.Circuit)) integrator.Integrator {
 	return &TrapezoidInt{
 		begin:  begin,
 		end:    end,

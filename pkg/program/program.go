@@ -18,6 +18,7 @@ import (
 	"github.com/Pavel7004/GraphPlot/pkg/integrator/midpoint"
 	midpointimplicit "github.com/Pavel7004/GraphPlot/pkg/integrator/midpoint-implicit"
 	threeeighth "github.com/Pavel7004/GraphPlot/pkg/integrator/three-eighth"
+	"github.com/Pavel7004/GraphPlot/pkg/integrator/trapeziod"
 )
 
 func Run(ctx context.Context, circ *circuit.Circuit, folderName string, buffSize, dpi int) {
@@ -30,6 +31,7 @@ func Run(ctx context.Context, circ *circuit.Circuit, folderName string, buffSize
 		midpointimplicit.NewMidpointImplInt,
 		bogatskiyshampin.NewShampinInt,
 		threeeighth.NewThreeEighthInt,
+		trapeziod.NewTrapezoidInt,
 	}
 
 	if err := os.MkdirAll(folderName, os.ModePerm); err != nil {
