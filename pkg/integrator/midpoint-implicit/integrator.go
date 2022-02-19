@@ -36,9 +36,8 @@ func (si *MidpointImpInt) Integrate(ctx context.Context, circ *circuit.Circuit) 
 	defer span.Finish()
 
 	var (
-		t         = si.begin
-		prevDeriv = si.GetDerivativeWithCoeff(circ.GetDerivative(), 1.0/2)
-		last      bool
+		t    = si.begin
+		last bool
 	)
 
 	for !last {
@@ -47,29 +46,11 @@ func (si *MidpointImpInt) Integrate(ctx context.Context, circ *circuit.Circuit) 
 			si.step = si.end - t
 		}
 
-		currDeriv := si.GetDerivativeWithCoeff(circ.GetDerivative(), 1.0/2)
-		k1 := si.GetSumOfDerivatives(currDeriv, prevDeriv)
-		prevDeriv = currDeriv
-
-		circ.ApplyDerivative(si.step, k1)
+		k1 := circ.Clone()
+		k1.ApplyDerivative(si.step/2, k1.GetDerivative())
+		circ.ApplyDerivative(si.step, k1.GetDerivative())
 
 		t += si.step
 		si.saveFn(t, circ)
 	}
-}
-
-func (si *MidpointImpInt) GetDerivativeWithCoeff(der []float64, k float64) []float64 {
-	res := make([]float64, len(der))
-	for i := range der {
-		res[i] = der[i] * k
-	}
-	return res
-}
-
-func (si *MidpointImpInt) GetSumOfDerivatives(der1, der2 []float64) []float64 {
-	res := make([]float64, len(der1))
-	for i := range res {
-		res[i] = der1[i] + der2[i]
-	}
-	return res
 }
