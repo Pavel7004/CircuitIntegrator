@@ -52,7 +52,7 @@ func (ip *InfoPlotter) DrawInImage(ctx context.Context) image.Image {
 
 	defer span.Finish()
 
-	if len(ip.points) != 0 {
+	if len(ip.points) != 1 {
 		ip.plotPoints()
 	}
 
@@ -69,7 +69,7 @@ func (ip *InfoPlotter) WriteSVGToStdout(ctx context.Context) {
 
 	defer span.Finish()
 
-	if len(ip.points) != 0 {
+	if len(ip.points) != 1 {
 		ip.plotPoints()
 	}
 
@@ -88,7 +88,7 @@ func (ip *InfoPlotter) SaveToFile(ctx context.Context, filename string) {
 
 	defer span.Finish()
 
-	if len(ip.points) != 0 {
+	if len(ip.points) != 1 {
 		ip.plotPoints()
 	}
 
