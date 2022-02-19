@@ -6,7 +6,7 @@ import (
 	"image/color"
 	"os"
 
-	"github.com/opentracing/opentracing-go"
+	"github.com/Pavel7004/GraphPlot/pkg/common/tracing"
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
 	"gonum.org/v1/plot/vg"
@@ -46,7 +46,16 @@ func (ip *InfoPlotter) EnableLogScale() {
 	ip.plot.Y.Scale = plot.LogScale{}
 }
 
-func (ip *InfoPlotter) DrawInImage() image.Image {
+func (ip *InfoPlotter) DrawInImage(ctx context.Context) image.Image {
+	span, ctx := tracing.StartSpanFromContext(ctx)
+	span.SetTag("buffer size", ip.bufferSize)
+
+	defer span.Finish()
+
+	if len(ip.points) != 0 {
+		ip.plotPoints()
+	}
+
 	img := image.NewRGBA(image.Rect(0, 0, 16*ip.dpi, 16*ip.dpi))
 	c := vgimg.NewWith(vgimg.UseImage(img))
 	ip.plot.Draw(draw.New(c))
@@ -54,7 +63,16 @@ func (ip *InfoPlotter) DrawInImage() image.Image {
 	return c.Image()
 }
 
-func (ip *InfoPlotter) WriteSVGToStdout() {
+func (ip *InfoPlotter) WriteSVGToStdout(ctx context.Context) {
+	span, ctx := tracing.StartSpanFromContext(ctx)
+	span.SetTag("buffer size", ip.bufferSize)
+
+	defer span.Finish()
+
+	if len(ip.points) != 0 {
+		ip.plotPoints()
+	}
+
 	c := vgsvg.New(3*vg.Inch, 3*vg.Inch)
 
 	ip.plot.Draw(draw.New(c))
@@ -64,7 +82,7 @@ func (ip *InfoPlotter) WriteSVGToStdout() {
 }
 
 func (ip *InfoPlotter) SaveToFile(ctx context.Context, filename string) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "InfoPlotter.SaveToFile")
+	span, ctx := tracing.StartSpanFromContext(ctx)
 	span.SetTag("filename", filename)
 	span.SetTag("buffer size", ip.bufferSize)
 
