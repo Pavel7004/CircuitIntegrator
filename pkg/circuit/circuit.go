@@ -110,9 +110,7 @@ func (st *Circuit) Clone() *Circuit {
 		tau:               st.tau,
 		voltagesCap:       make([]float64, 0, st.stagesCount),
 	}
-	for _, capVol := range st.voltagesCap {
-		newCirc.voltagesCap = append(newCirc.voltagesCap, capVol)
-	}
+	newCirc.voltagesCap = append(newCirc.voltagesCap, st.voltagesCap...)
 	newState := st.state.Clone(newCirc)
 	newCirc.state = newState
 	return newCirc
