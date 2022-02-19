@@ -9,7 +9,7 @@ import (
 
 	"github.com/Pavel7004/GraphPlot/pkg/circuit"
 	"github.com/Pavel7004/GraphPlot/pkg/cli"
-	"github.com/Pavel7004/GraphPlot/pkg/common/runtime"
+	misc "github.com/Pavel7004/GraphPlot/pkg/common/misc"
 	"github.com/Pavel7004/GraphPlot/pkg/common/tracing"
 	"github.com/Pavel7004/GraphPlot/pkg/graph"
 	"github.com/Pavel7004/GraphPlot/pkg/integrator"
@@ -42,7 +42,7 @@ func Run(ctx context.Context, circ *circuit.Circuit, folderName string, buffSize
 		PlotSystem(ctx, gr, circ, int)
 		PlotTheory(ctx, gr, circ)
 
-		gr.SaveToFile(ctx, path.Join(folderName, runtime.GetFuncModule(int)+"_theory.png"))
+		gr.SaveToFile(ctx, path.Join(folderName, misc.GetFuncModule(int)+"_theory.png"))
 	}
 
 	for _, int := range integrators {
@@ -50,7 +50,7 @@ func Run(ctx context.Context, circ *circuit.Circuit, folderName string, buffSize
 
 		PlotDiffFunc(ctx, gr, circ, int)
 
-		gr.SaveToFile(ctx, path.Join(folderName, runtime.GetFuncModule(int)+"_diffErr.png"))
+		gr.SaveToFile(ctx, path.Join(folderName, misc.GetFuncModule(int)+"_diffErr.png"))
 	}
 
 	for _, int := range integrators {
@@ -59,7 +59,7 @@ func Run(ctx context.Context, circ *circuit.Circuit, folderName string, buffSize
 		ctx := context.WithValue(ctx, "end", 200.0)
 		PlotSystem(ctx, gr, circ, int)
 
-		gr.SaveToFile(ctx, path.Join(folderName, runtime.GetFuncModule(int)+"_multiTicks.png"))
+		gr.SaveToFile(ctx, path.Join(folderName, misc.GetFuncModule(int)+"_multiTicks.png"))
 	}
 }
 
