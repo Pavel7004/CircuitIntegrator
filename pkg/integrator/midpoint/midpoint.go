@@ -46,9 +46,10 @@ func (mi *MidpointInt) Integrate(ctx context.Context, circ *circuit.Circuit) {
 			mi.step = mi.end - t
 		}
 
-		k1 := circ.Clone()
-		k1.ApplyDerivative(mi.step/2, k1.GetDerivative())
-		circ.ApplyDerivative(mi.step, k1.GetDerivative())
+		k2 := circ.Clone()
+		k2.ApplyDerivative(mi.step/2, circ.GetDerivative())
+		circ.ApplyDerivative(mi.step, k2.GetDerivative())
+
 		t += mi.step
 		mi.saveFn(t, circ)
 	}
