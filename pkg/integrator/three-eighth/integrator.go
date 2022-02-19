@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/Pavel7004/GraphPlot/pkg/circuit"
+	"github.com/Pavel7004/GraphPlot/pkg/common/tracing"
 	"github.com/Pavel7004/GraphPlot/pkg/integrator"
-	"github.com/opentracing/opentracing-go"
 )
 
 type ThreeEighthInt struct {
@@ -27,7 +27,7 @@ func NewThreeEighthInt(begin, end, step float64, saveFn func(t float64, x *circu
 }
 
 func (si *ThreeEighthInt) Integrate(ctx context.Context, circ *circuit.Circuit) {
-	span, ctx := opentracing.StartSpanFromContext(ctx, "ThreeEightsInt.Integrate")
+	span, ctx := tracing.StartSpanFromContext(ctx)
 	span.SetTag("StartPoint", si.begin)
 	span.SetTag("EndPoint", si.end)
 	span.SetTag("Step", si.step)
