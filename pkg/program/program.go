@@ -56,7 +56,7 @@ func Run(ctx context.Context, circ *circuit.Circuit, folderName string, buffSize
 	for _, int := range integrators {
 		gr := graph.NewInfoPlotter(buffSize, dpi)
 
-		ctx := context.WithValue(ctx, "end", 100.0)
+		ctx := context.WithValue(ctx, "end", 200.0)
 		PlotSystem(ctx, gr, circ, int)
 
 		gr.SaveToFile(ctx, path.Join(folderName, runtime.GetFuncModule(int)+"_multiTicks.png"))
