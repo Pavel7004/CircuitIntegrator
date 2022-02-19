@@ -45,7 +45,7 @@ func (si *ThreeEighthInt) Integrate(ctx context.Context, circ *circuit.Circuit) 
 			last = true
 			si.step = si.end - t
 		}
-		k1 := circ.Clone()
+		k1 := circ
 		k2 := circ.Clone()
 		k3 := circ.Clone()
 		k4 := circ.Clone()
