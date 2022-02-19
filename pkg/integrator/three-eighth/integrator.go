@@ -39,7 +39,7 @@ func (si *ThreeEighthInt) Integrate(ctx context.Context, circ *circuit.Circuit) 
 		t    = si.begin
 		last bool
 	)
-	
+
 	for !last {
 		if t+si.step > si.end {
 			last = true
