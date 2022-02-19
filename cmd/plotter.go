@@ -15,7 +15,6 @@ import (
 )
 
 func main() {
-	cli.ParseArgs()
 	closer := InitTracing()
 	defer closer.Close()
 
@@ -23,9 +22,11 @@ func main() {
 	span.SetTag("Step", cli.Step)
 	span.SetTag("NumberOfCapacitors", cli.CapCount)
 	span.SetTag("Dpi", cli.Dpi)
-	span.SetTag("Filename", cli.DirName)
+	span.SetTag("Dirname", cli.DirName)
 
 	defer span.Finish()
+
+	cli.ParseArgs()
 
 	chargeCirc := ChargeComponents{
 		SupplyVoltage:     6000,
