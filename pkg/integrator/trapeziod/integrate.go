@@ -3,8 +3,8 @@ package trapeziod
 import (
 	"context"
 
+	"github.com/Pavel7004/Common/tracing"
 	"github.com/Pavel7004/GraphPlot/pkg/circuit"
-	"github.com/Pavel7004/GraphPlot/pkg/common/tracing"
 	"github.com/Pavel7004/GraphPlot/pkg/integrator"
 )
 
@@ -46,19 +46,25 @@ func (si *TrapezoidInt) Integrate(ctx context.Context, circ *circuit.Circuit) fl
 			si.step = si.end - t
 		}
 
-		k1 := circ
-		tmp := circ.Clone()
-		tmp.ApplyDerivative(si.step/2, k1.GetDerivative())
-		k2 := circ.Clone()
-		k2.ApplyDerivative(si.step/2, k1.GetDerivative())
-		k2.ApplyDerivative(si.step/2, tmp.GetDerivative())
+		k1 := circ.GetDerivative()
+		tmp := circ.Clone().ApplyDerivative(si.step/2, k1).GetDerivative()
+		k2 := circ.Clone().ApplyDerivative(si.step, k1.WeighCopy(1.0/2).Add(1.0/2, tmp)).GetDerivative()
 
-		circ.ApplyDerivative(si.step/2, k1.GetDerivative())
-		circ.ApplyDerivative(si.step/2, k2.GetDerivative())
+		kn := k1.WeighCopy(1.0/2).Add(1.0/2, k2)
+		if !circ.CheckDerivative(si.step, kn) {
+			si.step = circ.CalculateOptimalStep(si.step, kn)
 
+			last = true
+		}
+
+		circ.ApplyDerivative(si.step, kn)
 		t += si.step
+
 		si.saveFn(t, circ)
 	}
+
+	span.SetTag("finish-point", t)
+	span.SetTag("finish-step", si.step)
 
 	return t
 }

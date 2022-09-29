@@ -1,5 +1,9 @@
 package circuit
 
+import (
+	"math"
+)
+
 type chargingState struct {
 	circ *Circuit
 }
@@ -22,6 +26,15 @@ func (s *chargingState) GetDerivative() *Derivative {
 	}
 }
 
+func (s *chargingState) CheckDerivative(step float64, d *Derivative) bool {
+	return s.circ.voltagesCap[0]+step*d.capVolts[0] < s.circ.gapTriggerVoltage
+}
+
+func (s *chargingState) CalculateOptimalStep(oldStep float64, d *Derivative) float64 {
+	err := math.Abs(s.circ.voltagesCap[0] + oldStep*d.capVolts[0] - s.circ.gapTriggerVoltage)
+	return 1 / err
+}
+
 func (s *chargingState) Clone(newCirc *Circuit) circuitState {
 	return &chargingState{
 		circ: newCirc,
@@ -33,7 +46,5 @@ func (s *chargingState) GetLoadVoltage() float64 {
 }
 
 func (s *chargingState) ChangeState() {
-	if s.circ.gapTriggerVoltage-s.circ.voltagesCap[0] < 0.0001 {
-		s.circ.state = newDischargingState(s.circ)
-	}
+	s.circ.state = newDischargingState(s.circ)
 }

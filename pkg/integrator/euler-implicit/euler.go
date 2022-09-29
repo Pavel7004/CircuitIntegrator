@@ -1,4 +1,4 @@
-package euler
+package eulerimplicit
 
 import (
 	"context"
@@ -9,17 +9,17 @@ import (
 	"github.com/Pavel7004/GraphPlot/pkg/integrator"
 )
 
-type EulerInt struct {
+type EulerImplicitInt struct {
 	begin  float64
 	end    float64
 	step   float64
 	saveFn func(t float64, x *circuit.Circuit)
 }
 
-var _ integrator.Integrator = (*EulerInt)(nil)
+var _ integrator.Integrator = (*EulerImplicitInt)(nil)
 
-func NewEulerInt(begin, end, step float64, saveFn func(t float64, x *circuit.Circuit)) integrator.Integrator {
-	return &EulerInt{
+func NewEulerImplicitInt(begin, end, step float64, saveFn func(t float64, x *circuit.Circuit)) integrator.Integrator {
+	return &EulerImplicitInt{
 		begin:  begin,
 		end:    end,
 		step:   step,
@@ -27,7 +27,7 @@ func NewEulerInt(begin, end, step float64, saveFn func(t float64, x *circuit.Cir
 	}
 }
 
-func (ei *EulerInt) Integrate(ctx context.Context, circ *circuit.Circuit) float64 {
+func (ei *EulerImplicitInt) Integrate(ctx context.Context, circ *circuit.Circuit) float64 {
 	span, ctx := tracing.StartSpanFromContext(ctx)
 	span.SetTag("StartPoint", ei.begin)
 	span.SetTag("EndPoint", ei.end)

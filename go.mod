@@ -9,6 +9,7 @@ require (
 
 require (
 	github.com/HdrHistogram/hdrhistogram-go v1.1.2 // indirect
+	github.com/Pavel7004/Common v0.0.0-20220306134122-e265e5f6cbec
 	github.com/ajstarks/svgo v0.0.0-20210923152817-c3b6e2f0c527 // indirect
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pkg/errors v0.9.1 // indirect

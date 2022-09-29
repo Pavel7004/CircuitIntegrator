@@ -3,8 +3,8 @@ package threeeighth
 import (
 	"context"
 
+	"github.com/Pavel7004/Common/tracing"
 	"github.com/Pavel7004/GraphPlot/pkg/circuit"
-	"github.com/Pavel7004/GraphPlot/pkg/common/tracing"
 	"github.com/Pavel7004/GraphPlot/pkg/integrator"
 )
 
@@ -28,10 +28,10 @@ func NewThreeEighthInt(begin, end, step float64, saveFn func(t float64, x *circu
 
 func (si *ThreeEighthInt) Integrate(ctx context.Context, circ *circuit.Circuit) float64 {
 	span, ctx := tracing.StartSpanFromContext(ctx)
-	span.SetTag("StartPoint", si.begin)
-	span.SetTag("EndPoint", si.end)
-	span.SetTag("Step", si.step)
-	span.SetTag("RK-stages", 4)
+	span.SetTag("start-point", si.begin)
+	span.SetTag("end-point", si.end)
+	span.SetTag("step", si.step)
+	span.SetTag("rk-stages", 4)
 
 	defer span.Finish()
 
@@ -40,28 +40,32 @@ func (si *ThreeEighthInt) Integrate(ctx context.Context, circ *circuit.Circuit) 
 		last bool
 	)
 
-	for !last {
+	for !last && si.step > 0 {
 		if t+si.step > si.end {
 			last = true
 			si.step = si.end - t
 		}
-		k1 := circ
-		k2 := circ.Clone()
-		k3 := circ.Clone()
-		k4 := circ.Clone()
-		k2.ApplyDerivative(si.step/3, k1.GetDerivative())
-		k3.ApplyDerivative(-si.step/3, k1.GetDerivative())
-		k3.ApplyDerivative(si.step, k2.GetDerivative())
-		k4.ApplyDerivative(si.step, k1.GetDerivative())
-		k4.ApplyDerivative(-si.step, k2.GetDerivative())
-		k4.ApplyDerivative(si.step, k3.GetDerivative())
-		circ.ApplyDerivative(si.step/8, k1.GetDerivative())
-		circ.ApplyDerivative(3*si.step/8, k2.GetDerivative())
-		circ.ApplyDerivative(3*si.step/8, k3.GetDerivative())
-		circ.ApplyDerivative(si.step/8, k4.GetDerivative())
+
+		k1 := circ.GetDerivative()
+		k2 := circ.Clone().ApplyDerivative(si.step/3, k1).GetDerivative()
+		k3 := circ.Clone().ApplyDerivative(si.step, k1.WeighCopy(-1/3).Add(1, k2)).GetDerivative()
+		k4 := circ.Clone().ApplyDerivative(si.step, k1.WeighCopy(1).Add(-1, k2).Add(1, k3)).GetDerivative()
+
+		kn := k1.WeighCopy(1.0/8).Add(3.0/8, k2).Add(3.0/8, k3).Add(1.0/8, k4)
+		if !circ.CheckDerivative(si.step, kn) {
+			si.step = circ.CalculateOptimalStep(si.step, kn)
+
+			last = true
+		}
+
+		circ.ApplyDerivative(si.step, kn)
 		t += si.step
+
 		si.saveFn(t, circ)
 	}
+
+	span.SetTag("finish-point", t)
+	span.SetTag("finish-step", si.step)
 
 	return t
 }

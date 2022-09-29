@@ -6,7 +6,7 @@ import (
 	"image/color"
 	"os"
 
-	"github.com/Pavel7004/GraphPlot/pkg/common/tracing"
+	"github.com/Pavel7004/Common/tracing"
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
 	"gonum.org/v1/plot/vg"
@@ -52,7 +52,7 @@ func (ip *InfoPlotter) DrawInImage(ctx context.Context) image.Image {
 
 	defer span.Finish()
 
-	if len(ip.points) != 1 {
+	if len(ip.points) > 1 {
 		ip.plotPoints()
 	}
 
@@ -69,7 +69,7 @@ func (ip *InfoPlotter) WriteSVGToStdout(ctx context.Context) {
 
 	defer span.Finish()
 
-	if len(ip.points) != 1 {
+	if len(ip.points) > 1 {
 		ip.plotPoints()
 	}
 
@@ -88,7 +88,7 @@ func (ip *InfoPlotter) SaveToFile(ctx context.Context, filename string) {
 
 	defer span.Finish()
 
-	if len(ip.points) != 1 {
+	if len(ip.points) > 1 {
 		ip.plotPoints()
 	}
 

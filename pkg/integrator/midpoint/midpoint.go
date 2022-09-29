@@ -2,9 +2,10 @@ package midpoint
 
 import (
 	"context"
+	"math"
 
+	"github.com/Pavel7004/Common/tracing"
 	"github.com/Pavel7004/GraphPlot/pkg/circuit"
-	"github.com/Pavel7004/GraphPlot/pkg/common/tracing"
 	"github.com/Pavel7004/GraphPlot/pkg/integrator"
 )
 
@@ -40,19 +41,30 @@ func (mi *MidpointInt) Integrate(ctx context.Context, circ *circuit.Circuit) flo
 		last bool
 	)
 
-	for !last {
+	for !last && mi.step > 0 {
 		if t+mi.step > mi.end {
 			last = true
 			mi.step = mi.end - t
 		}
 
-		k2 := circ.Clone()
-		k2.ApplyDerivative(mi.step/2, circ.GetDerivative())
-		circ.ApplyDerivative(mi.step, k2.GetDerivative())
+		k1 := circ.GetDerivative()
+		k2 := circ.Clone().ApplyDerivative(mi.step/2, k1).GetDerivative()
 
+		if !circ.CheckDerivative(mi.step, k2) {
+			mi.step = circ.CalculateOptimalStep(mi.step, k2)
+			mi.step = math.Cbrt(mi.step)
+
+			last = true
+		}
+
+		circ.ApplyDerivative(mi.step, k2)
 		t += mi.step
+
 		mi.saveFn(t, circ)
 	}
+
+	span.SetTag("finish-point", t)
+	span.SetTag("finish-step", mi.step)
 
 	return t
 }

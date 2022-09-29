@@ -3,8 +3,8 @@ package midpointimplicit
 import (
 	"context"
 
+	"github.com/Pavel7004/Common/tracing"
 	"github.com/Pavel7004/GraphPlot/pkg/circuit"
-	"github.com/Pavel7004/GraphPlot/pkg/common/tracing"
 	"github.com/Pavel7004/GraphPlot/pkg/integrator"
 )
 
@@ -40,19 +40,29 @@ func (si *MidpointImpInt) Integrate(ctx context.Context, circ *circuit.Circuit) 
 		last bool
 	)
 
-	for !last {
+	for !last && si.step > 0 {
 		if t+si.step > si.end {
 			last = true
 			si.step = si.end - t
 		}
 
-		k1 := circ.Clone()
-		k1.ApplyDerivative(si.step/2, k1.GetDerivative())
-		circ.ApplyDerivative(si.step, k1.GetDerivative())
+		tmp := circ.GetDerivative()
+		k1 := circ.Clone().ApplyDerivative(si.step/2, tmp).GetDerivative()
 
+		if !circ.CheckDerivative(si.step, k1) {
+			si.step = circ.CalculateOptimalStep(si.step, k1)
+
+			last = true
+		}
+
+		circ.ApplyDerivative(si.step, k1)
 		t += si.step
+
 		si.saveFn(t, circ)
 	}
+
+	span.SetTag("finish-point", t)
+	span.SetTag("finish-step", si.step)
 
 	return t
 }

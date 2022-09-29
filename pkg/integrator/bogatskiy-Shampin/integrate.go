@@ -2,9 +2,10 @@ package bogatskiyshampin
 
 import (
 	"context"
+	"math"
 
+	"github.com/Pavel7004/Common/tracing"
 	"github.com/Pavel7004/GraphPlot/pkg/circuit"
-	"github.com/Pavel7004/GraphPlot/pkg/common/tracing"
 	"github.com/Pavel7004/GraphPlot/pkg/integrator"
 )
 
@@ -40,25 +41,32 @@ func (si *ShapinInt) Integrate(ctx context.Context, circ *circuit.Circuit) float
 		last bool
 	)
 
-	for !last {
+	for !last && si.step > 0 {
 		if t+si.step > si.end {
 			last = true
 			si.step = si.end - t
 		}
 
-		k1 := circ.Clone()
-		k2 := circ.Clone()
-		k2.ApplyDerivative(si.step/2, k1.GetDerivative())
-		k3 := circ.Clone()
-		k3.ApplyDerivative(si.step*3/4, k2.GetDerivative())
+		k1 := circ.GetDerivative()
+		k2 := circ.Clone().ApplyDerivative(si.step/2, k1).GetDerivative()
+		k3 := circ.Clone().ApplyDerivative(3*si.step/4, k2).GetDerivative()
 
-		circ.ApplyDerivative(si.step*2/9, k1.GetDerivative())
-		circ.ApplyDerivative(si.step/3, k2.GetDerivative())
-		circ.ApplyDerivative(si.step*4/9, k3.GetDerivative())
+		kn := k1.WeighCopy(2.0/9).Add(1.0/3, k2).Add(4.0/9, k3)
+		if !circ.CheckDerivative(si.step, kn) {
+			si.step = circ.CalculateOptimalStep(si.step, kn)
+			si.step = math.Sqrt(math.Sqrt(si.step))
 
+			last = true
+		}
+
+		circ.ApplyDerivative(si.step, kn)
 		t += si.step
+
 		si.saveFn(t, circ)
 	}
+
+	span.SetTag("finish-point", t)
+	span.SetTag("finish-step", si.step)
 
 	return t
 }

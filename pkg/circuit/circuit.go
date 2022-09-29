@@ -12,6 +12,7 @@ type Circuit struct {
 	gapTriggerVoltage float64
 	holdingVoltage    float64
 	load              LoadComponents
+	tolerance         float64
 	state             circuitState
 	tau               []float64
 	voltagesCap       []float64
@@ -28,6 +29,7 @@ func NewCircuit(chargeComp ChargeComponents, load LoadComponents) *Circuit {
 		gapTriggerVoltage: chargeComp.GapTriggerVoltage,
 		holdingVoltage:    chargeComp.HoldingVoltage,
 		load:              load,
+		tolerance:         0.0001,
 		state:             nil,
 		tau:               make([]float64, chargeComp.StagesCount),
 		voltagesCap:       make([]float64, chargeComp.StagesCount),
@@ -47,10 +49,19 @@ func (st *Circuit) ToggleState() {
 	st.state.ChangeState()
 }
 
-func (st *Circuit) ApplyDerivative(h float64, d *Derivative) {
+func (st *Circuit) CheckDerivative(step float64, d *Derivative) bool {
+	return st.state.CheckDerivative(step, d)
+}
+
+func (st *Circuit) CalculateOptimalStep(oldStep float64, d *Derivative) float64 {
+	return st.state.CalculateOptimalStep(oldStep, d)
+}
+
+func (st *Circuit) ApplyDerivative(h float64, d *Derivative) *Circuit {
 	for i := range st.voltagesCap {
 		st.voltagesCap[i] += h * d.capVolts[i]
 	}
+	return st
 }
 
 func (st *Circuit) GetCapVoltage(pos uint) float64 {
@@ -106,6 +117,7 @@ func (st *Circuit) Clone() *Circuit {
 		gapTriggerVoltage: st.gapTriggerVoltage,
 		holdingVoltage:    st.holdingVoltage,
 		load:              load,
+		tolerance:         st.tolerance,
 		state:             nil,
 		tau:               st.tau,
 		voltagesCap:       make([]float64, 0, st.stagesCount),
