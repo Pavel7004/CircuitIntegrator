@@ -46,8 +46,7 @@ func (si *MidpointImpInt) Integrate(ctx context.Context, circ *circuit.Circuit) 
 			si.step = si.end - t
 		}
 
-		tmp := circ.GetDerivative()
-		k1 := circ.Clone().ApplyDerivative(si.step/2, tmp).GetDerivative()
+		k1 := circ.GetDerivative()
 
 		if !circ.CheckDerivative(si.step, k1) {
 			si.step = circ.CalculateOptimalStep(si.step, k1)
@@ -56,6 +55,7 @@ func (si *MidpointImpInt) Integrate(ctx context.Context, circ *circuit.Circuit) 
 		}
 
 		circ.ApplyDerivative(si.step, k1)
+		circ.ApplyDerivative(si.step*si.step/2, k1)
 		t += si.step
 
 		si.saveFn(t, circ)
