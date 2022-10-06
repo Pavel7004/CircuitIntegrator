@@ -5,9 +5,9 @@ import (
 	"io"
 
 	"github.com/Pavel7004/Common/tracing"
+	"github.com/Pavel7004/GraphPlot/pkg/adapter/cli"
 	. "github.com/Pavel7004/GraphPlot/pkg/circuit"
-	"github.com/Pavel7004/GraphPlot/pkg/cli"
-	"github.com/Pavel7004/GraphPlot/pkg/program"
+	plot "github.com/Pavel7004/GraphPlot/pkg/plot-cli"
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/uber/jaeger-client-go"
 	jaegercfg "github.com/uber/jaeger-client-go/config"
@@ -43,7 +43,7 @@ func main() {
 
 	circ := NewCircuit(chargeCirc, load)
 
-	program.Run(ctx, circ, cli.Step, cli.DirName, cli.PointBuffSize, cli.Dpi)
+	plot.Run(ctx, circ, cli.Step, cli.DirName, cli.PointBuffSize, cli.Dpi)
 }
 
 func InitTracing() io.Closer {

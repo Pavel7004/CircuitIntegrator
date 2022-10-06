@@ -9,15 +9,15 @@ import (
 
 	misc "github.com/Pavel7004/Common/misc"
 	"github.com/Pavel7004/Common/tracing"
+	"github.com/Pavel7004/GraphPlot/pkg/adapter/integrator"
+	bogatskiyshampin "github.com/Pavel7004/GraphPlot/pkg/adapter/integrator/bogatskiy-Shampin"
+	"github.com/Pavel7004/GraphPlot/pkg/adapter/integrator/euler"
+	"github.com/Pavel7004/GraphPlot/pkg/adapter/integrator/midpoint"
+	midpointimplicit "github.com/Pavel7004/GraphPlot/pkg/adapter/integrator/midpoint-implicit"
+	threeeighth "github.com/Pavel7004/GraphPlot/pkg/adapter/integrator/three-eighth"
+	"github.com/Pavel7004/GraphPlot/pkg/adapter/integrator/trapeziod"
+	plotter "github.com/Pavel7004/GraphPlot/pkg/adapter/plotter"
 	"github.com/Pavel7004/GraphPlot/pkg/circuit"
-	"github.com/Pavel7004/GraphPlot/pkg/graph"
-	"github.com/Pavel7004/GraphPlot/pkg/integrator"
-	bogatskiyshampin "github.com/Pavel7004/GraphPlot/pkg/integrator/bogatskiy-Shampin"
-	"github.com/Pavel7004/GraphPlot/pkg/integrator/euler"
-	"github.com/Pavel7004/GraphPlot/pkg/integrator/midpoint"
-	midpointimplicit "github.com/Pavel7004/GraphPlot/pkg/integrator/midpoint-implicit"
-	threeeighth "github.com/Pavel7004/GraphPlot/pkg/integrator/three-eighth"
-	"github.com/Pavel7004/GraphPlot/pkg/integrator/trapeziod"
 )
 
 func Run(ctx context.Context, circ *circuit.Circuit, step float64, folderName string, buffSize, dpi int) {
@@ -38,7 +38,7 @@ func Run(ctx context.Context, circ *circuit.Circuit, step float64, folderName st
 	}
 
 	for _, int := range integrators {
-		gr := graph.NewInfoPlotter(buffSize, dpi)
+		gr := plotter.NewInfoPlotter(buffSize, dpi)
 
 		plotSystem(ctx, gr, circ, step, int)
 		plotTheory(ctx, gr, circ)
@@ -47,7 +47,7 @@ func Run(ctx context.Context, circ *circuit.Circuit, step float64, folderName st
 	}
 
 	for _, int := range integrators {
-		gr := graph.NewInfoPlotter(buffSize, dpi)
+		gr := plotter.NewInfoPlotter(buffSize, dpi)
 
 		plotDiffFunc(ctx, gr, circ, step, int)
 
@@ -55,7 +55,7 @@ func Run(ctx context.Context, circ *circuit.Circuit, step float64, folderName st
 	}
 
 	for _, int := range integrators {
-		gr := graph.NewInfoPlotter(buffSize, dpi)
+		gr := plotter.NewInfoPlotter(buffSize, dpi)
 
 		ctx := context.WithValue(ctx, "end", 200.0)
 		plotSystem(ctx, gr, circ, step, int)
@@ -64,7 +64,7 @@ func Run(ctx context.Context, circ *circuit.Circuit, step float64, folderName st
 	}
 }
 
-func plotSystem(ctx context.Context, gr *graph.InfoPlotter, circ *circuit.Circuit, step float64, newInt integrator.NewIntFunc) {
+func plotSystem(ctx context.Context, gr *plotter.InfoPlotter, circ *circuit.Circuit, step float64, newInt integrator.NewIntFunc) {
 	span, ctx := tracing.StartSpanFromContext(ctx)
 	defer span.Finish()
 
@@ -90,7 +90,7 @@ func plotSystem(ctx context.Context, gr *graph.InfoPlotter, circ *circuit.Circui
 	}
 }
 
-func plotTheory(ctx context.Context, gr *graph.InfoPlotter, circ *circuit.Circuit) {
+func plotTheory(ctx context.Context, gr *plotter.InfoPlotter, circ *circuit.Circuit) {
 	span, ctx := tracing.StartSpanFromContext(ctx)
 	defer span.Finish()
 
@@ -98,7 +98,7 @@ func plotTheory(ctx context.Context, gr *graph.InfoPlotter, circ *circuit.Circui
 	gr.PlotFunc(color.RGBA{R: 255, A: 255}, st.GetLoadVoltageFunc())
 }
 
-func plotDiffFunc(ctx context.Context, gr *graph.InfoPlotter, circ *circuit.Circuit, step float64, newInt integrator.NewIntFunc) {
+func plotDiffFunc(ctx context.Context, gr *plotter.InfoPlotter, circ *circuit.Circuit, step float64, newInt integrator.NewIntFunc) {
 	span, ctx := tracing.StartSpanFromContext(ctx)
 	defer span.Finish()
 

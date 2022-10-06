@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/Pavel7004/Common/tracing"
+	"github.com/Pavel7004/GraphPlot/pkg/adapter/integrator"
 	"github.com/Pavel7004/GraphPlot/pkg/circuit"
-	"github.com/Pavel7004/GraphPlot/pkg/integrator"
 )
 
 type MidpointImpInt struct {
