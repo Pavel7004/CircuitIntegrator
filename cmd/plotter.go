@@ -7,7 +7,7 @@ import (
 	"github.com/Pavel7004/Common/tracing"
 	"github.com/Pavel7004/GraphPlot/pkg/adapter/cli"
 	. "github.com/Pavel7004/GraphPlot/pkg/circuit"
-	plot "github.com/Pavel7004/GraphPlot/pkg/plot-cli"
+	plotcli "github.com/Pavel7004/GraphPlot/pkg/plot-cli"
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/uber/jaeger-client-go"
 	jaegercfg "github.com/uber/jaeger-client-go/config"
@@ -19,14 +19,14 @@ func main() {
 	defer closer.Close()
 
 	span, ctx := tracing.StartSpanFromContext(context.Background())
+	defer span.Finish()
+
+	cli.ParseArgs()
+
 	span.SetTag("Step", cli.Step)
 	span.SetTag("NumberOfCapacitors", cli.CapCount)
 	span.SetTag("Dpi", cli.Dpi)
 	span.SetTag("Dirname", cli.DirName)
-
-	defer span.Finish()
-
-	cli.ParseArgs()
 
 	chargeCirc := ChargeComponents{
 		SupplyVoltage:     6000,
@@ -42,8 +42,14 @@ func main() {
 	}
 
 	circ := NewCircuit(chargeCirc, load)
+	p := plotcli.NewPlotterCli(circ, &plotcli.Settings{
+		Step:       cli.Step,
+		FolderName: cli.DirName,
+		BuffSize:   cli.PointBuffSize,
+		Dpi:        cli.Dpi,
+	})
 
-	plot.Run(ctx, circ, cli.Step, cli.DirName, cli.PointBuffSize, cli.Dpi)
+	p.Plot()
 }
 
 func InitTracing() io.Closer {
