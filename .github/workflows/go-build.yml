@@ -20,7 +20,3 @@ jobs:
 
     - name: Build
       run: make
-
-    - name: Lint
-      uses: golangci/golangci-lint-action@v3.2.0
-      run: make lint
