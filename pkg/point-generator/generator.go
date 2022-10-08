@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/Pavel7004/Common/tracing"
+	"github.com/Pavel7004/GraphPlot/pkg/circuit"
 )
 
 type endPoint string
@@ -15,6 +16,8 @@ func GeneratePoints(ctx context.Context, args *Args) {
 	defer span.Finish()
 
 	var (
+		circuit *circuit.Circuit = args.Circuit.Clone()
+
 		left  float64
 		right float64
 	)
@@ -27,8 +30,8 @@ func GeneratePoints(ctx context.Context, args *Args) {
 	for left < right {
 		int := args.NewIntFn(left, right, args.Step, args.SaveFn)
 
-		left = int.Integrate(ctx, args.Circuit)
+		left = int.Integrate(ctx, circuit)
 
-		args.Circuit.ToggleState()
+		circuit.ToggleState()
 	}
 }
