@@ -17,7 +17,7 @@ import (
 	midpointimplicit "github.com/Pavel7004/GraphPlot/pkg/adapter/integrator/midpoint-implicit"
 	threeeighth "github.com/Pavel7004/GraphPlot/pkg/adapter/integrator/three-eighth"
 	"github.com/Pavel7004/GraphPlot/pkg/adapter/integrator/trapeziod"
-	plotter "github.com/Pavel7004/GraphPlot/pkg/adapter/plotter"
+	plotter "github.com/Pavel7004/GraphPlot/pkg/adapter/plot-img"
 	"github.com/Pavel7004/GraphPlot/pkg/circuit"
 	pointgenerator "github.com/Pavel7004/GraphPlot/pkg/point-generator"
 )
