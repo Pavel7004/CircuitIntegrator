@@ -5,6 +5,7 @@ import (
 	"math"
 
 	"github.com/Pavel7004/Common/tracing"
+
 	"github.com/Pavel7004/GraphPlot/pkg/adapter/integrator"
 	"github.com/Pavel7004/GraphPlot/pkg/circuit"
 )

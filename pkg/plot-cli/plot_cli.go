@@ -9,6 +9,7 @@ import (
 
 	misc "github.com/Pavel7004/Common/misc"
 	"github.com/Pavel7004/Common/tracing"
+
 	"github.com/Pavel7004/GraphPlot/pkg/adapter/integrator"
 	bogatskiyshampin "github.com/Pavel7004/GraphPlot/pkg/adapter/integrator/bogatskiy-Shampin"
 	"github.com/Pavel7004/GraphPlot/pkg/adapter/integrator/euler"

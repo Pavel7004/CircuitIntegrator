@@ -5,13 +5,14 @@ import (
 	"io"
 
 	"github.com/Pavel7004/Common/tracing"
-	"github.com/Pavel7004/GraphPlot/pkg/adapter/cli"
-	. "github.com/Pavel7004/GraphPlot/pkg/circuit"
-	plotcli "github.com/Pavel7004/GraphPlot/pkg/plot-cli"
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/uber/jaeger-client-go"
 	jaegercfg "github.com/uber/jaeger-client-go/config"
 	"github.com/uber/jaeger-lib/metrics"
+
+	"github.com/Pavel7004/GraphPlot/pkg/adapter/cli"
+	. "github.com/Pavel7004/GraphPlot/pkg/circuit"
+	plotcli "github.com/Pavel7004/GraphPlot/pkg/plot-cli"
 )
 
 func main() {
