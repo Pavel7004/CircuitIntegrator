@@ -4,22 +4,30 @@ run:
   skip-dirs:
     - vendor
     - misc
+    - results
 linters:
   disable-all: true
   enable:
-    - deadcode
     - errcheck
     - unused
-    - varcheck
     - whitespace
     - gosimple
     - govet
     - ineffassign
     - staticcheck
-    - structcheck
     - typecheck
     - gosec
     - prealloc
     - gofmt
     - goimports
     - funlen
+    - containedctx
+    - contextcheck
+    - decorder
+    - dupword
+    - durationcheck
+    - errname
+    - errchkjson
+    - errorlint
+    - gci
+    - gocritic
