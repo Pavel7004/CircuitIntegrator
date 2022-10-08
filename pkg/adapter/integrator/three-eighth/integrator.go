@@ -27,7 +27,7 @@ func NewThreeEighthInt(begin, end, step float64, saveFn func(t float64, x *circu
 }
 
 func (si *ThreeEighthInt) Integrate(ctx context.Context, circ *circuit.Circuit) float64 {
-	span, ctx := tracing.StartSpanFromContext(ctx)
+	span, _ := tracing.StartSpanFromContext(ctx)
 	span.SetTag("start-point", si.begin)
 	span.SetTag("end-point", si.end)
 	span.SetTag("step", si.step)
@@ -48,7 +48,7 @@ func (si *ThreeEighthInt) Integrate(ctx context.Context, circ *circuit.Circuit) 
 
 		k1 := circ.GetDerivative()
 		k2 := circ.Clone().ApplyDerivative(si.step/3, k1).GetDerivative()
-		k3 := circ.Clone().ApplyDerivative(si.step, k1.WeighCopy(-1/3).Add(1, k2)).GetDerivative()
+		k3 := circ.Clone().ApplyDerivative(si.step, k1.WeighCopy(-1.0/3.0).Add(1, k2)).GetDerivative()
 		k4 := circ.Clone().ApplyDerivative(si.step, k1.WeighCopy(1).Add(-1, k2).Add(1, k3)).GetDerivative()
 
 		kn := k1.WeighCopy(1.0/8).Add(3.0/8, k2).Add(3.0/8, k3).Add(1.0/8, k4)

@@ -28,7 +28,7 @@ func NewMidpointInt(begin, end, step float64, saveFn func(t float64, x *circuit.
 }
 
 func (mi *MidpointInt) Integrate(ctx context.Context, circ *circuit.Circuit) float64 {
-	span, ctx := tracing.StartSpanFromContext(ctx)
+	span, _ := tracing.StartSpanFromContext(ctx)
 	span.SetTag("StartPoint", mi.begin)
 	span.SetTag("EndPoint", mi.end)
 	span.SetTag("Step", mi.step)
