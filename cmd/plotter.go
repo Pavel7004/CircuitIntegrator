@@ -49,7 +49,7 @@ func main() {
 		Dpi:        cli.Dpi,
 	})
 
-	p.Plot()
+	p.Plot(ctx)
 }
 
 func InitTracing() io.Closer {

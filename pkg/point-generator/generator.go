@@ -28,29 +28,3 @@ func GeneratePoints(ctx context.Context, args *Args) {
 		args.Circuit.ToggleState()
 	}
 }
-
-// func PlotDiffFunc(ctx context.Context, args Args) {
-// 	span, ctx := tracing.StartSpanFromContext(ctx)
-// 	defer span.Finish()
-
-// 	var (
-// 		theory = args.circ.GetLoadVoltageFunc()
-// 		left   = 0.0
-// 		right  = 60.0
-// 	)
-
-// 	gr.SetYLabel("x(t), %")
-// 	for left < right {
-// 		int := args.newInt(left, right, args.step, args.saveFn)
-// 		// vol := x.GetLoadVoltage()
-// 		// if vol < 0.0001 {
-// 		// 	gr.AddPoint(t, 0.0)
-// 		// } else {
-// 		// 	gr.AddPoint(t, math.Abs(vol-theory(t))/vol*100)
-// 		// }
-
-// 		left = int.Integrate(ctx, st)
-
-// 		st.ToggleState()
-// 	}
-// }
