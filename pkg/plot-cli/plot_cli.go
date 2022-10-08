@@ -113,7 +113,7 @@ func (p *PlotterCli) PlotMultiTrigger(ctx context.Context) {
 	for _, int := range p.integrators {
 		gr := plotter.NewInfoPlotter(s.BuffSize, s.Dpi)
 
-		ctx := context.WithValue(ctx, "end", 200.0)
+		ctx := context.WithValue(ctx, pointgenerator.EndPoint, 200.0)
 		pointgenerator.GeneratePoints(ctx, &pointgenerator.Args{
 			Circuit: p.Circuit,
 			Step:    s.Step,
