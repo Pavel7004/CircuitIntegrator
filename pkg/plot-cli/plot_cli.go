@@ -75,7 +75,7 @@ func (p *PlotterCli) PlotSingleTrigger(ctx context.Context) {
 			},
 			NewIntFn: int,
 		})
-		gr.PlotFunc(color.RGBA{R: 255}, p.Circuit.GetLoadVoltageFunc())
+		gr.PlotFunc(color.RGBA{R: 255, A: 255}, p.Circuit.GetLoadVoltageFunc())
 
 		gr.SaveToFile(ctx, path.Join(s.FolderName, misc.GetFuncModule(int)+"_theory.png"))
 	}
