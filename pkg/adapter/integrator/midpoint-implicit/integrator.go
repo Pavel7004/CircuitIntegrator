@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/Pavel7004/Common/tracing"
-
 	"github.com/Pavel7004/GraphPlot/pkg/adapter/integrator"
 	"github.com/Pavel7004/GraphPlot/pkg/circuit"
 )
@@ -29,9 +28,9 @@ func NewMidpointImplInt(begin, end, step float64, saveFn func(t float64, x *circ
 
 func (si *MidpointImpInt) Integrate(ctx context.Context, circ *circuit.Circuit) float64 {
 	span, _ := tracing.StartSpanFromContext(ctx)
-	span.SetTag("StartPoint", si.begin)
-	span.SetTag("EndPoint", si.end)
-	span.SetTag("Step", si.step)
+	span.SetTag("start-point", si.begin)
+	span.SetTag("end-point", si.end)
+	span.SetTag("step", si.step)
 	span.SetTag("RK-stages", 2)
 
 	defer span.Finish()
