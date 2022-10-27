@@ -13,7 +13,9 @@ require (
 	github.com/ajstarks/svgo v0.0.0-20210923152817-c3b6e2f0c527 // indirect
 	github.com/gin-gonic/gin v1.8.1
 	github.com/opentracing/opentracing-go v1.2.0
-	github.com/pkg/errors v0.9.1 // indirect
+	github.com/rs/zerolog v1.28.0
+	github.com/spf13/cobra v1.6.1
+	github.com/spf13/viper v1.13.0
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
 	github.com/uber/jaeger-lib v2.4.1+incompatible
 	go.uber.org/atomic v1.9.0 // indirect
