@@ -7,7 +7,10 @@
 all: build
 
 build:
-	go build ./cmd/plotter.go
+	go build ./cmd/plotter/plotter.go
+
+server:
+	go build ./cmd/server/server.go
 
 jaeger:
 	docker run -d -p 6831:6831/udp -p 16686:16686 jaegertracing/all-in-one:latest
