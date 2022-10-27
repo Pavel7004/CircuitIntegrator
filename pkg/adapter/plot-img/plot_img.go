@@ -92,7 +92,7 @@ func (ip *InfoPlotter) SaveToFile(ctx context.Context, filename string) {
 		ip.plotPoints()
 	}
 
-	if err := ip.plot.Save(4*vg.Inch, 4*vg.Inch, filename); err != nil {
+	if err := ip.plot.Save(8*vg.Inch, 8*vg.Inch, filename); err != nil {
 		panic(err)
 	}
 }
