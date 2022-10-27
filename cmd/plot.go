@@ -37,7 +37,11 @@ var plotCmd = &cobra.Command{
 	Short: "Generate plot image",
 	Long: `Generate plot image in your directory.
 
-Due to implementation don't support step less than 0.01.`,
+Due to implementation don't support step less than 0.01.
+
+Example: graph plot -d 300 -s 0.1 -o results
+
+This will create directory results/ and put plot images into it.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		chargeCirc := circuit.ChargeComponents{
 			SupplyVoltage:     *supplyVol,
