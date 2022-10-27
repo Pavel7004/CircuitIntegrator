@@ -18,7 +18,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 import (
 	"github.com/spf13/cobra"
 
-	. "github.com/Pavel7004/GraphPlot/pkg/adapters/circuit"
+	"github.com/Pavel7004/GraphPlot/pkg/adapters/circuit"
 	plotcli "github.com/Pavel7004/GraphPlot/pkg/components/plot-cli"
 )
 
@@ -39,7 +39,7 @@ var plotCmd = &cobra.Command{
 
 Due to implementation don't support step less than 0.01.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		chargeCirc := ChargeComponents{
+		chargeCirc := circuit.ChargeComponents{
 			SupplyVoltage:     *supplyVol,
 			Capacity:          0.001,
 			Resistance:        5000,
@@ -48,11 +48,11 @@ Due to implementation don't support step less than 0.01.`,
 			HoldingVoltage:    1,
 		}
 
-		load := LoadComponents{
+		load := circuit.LoadComponents{
 			Resistance: *loadRes,
 		}
 
-		circ := NewCircuit(chargeCirc, load)
+		circ := circuit.New(chargeCirc, load)
 		p := plotcli.NewPlotterCli(circ, &plotcli.Settings{
 			Step:       *step,
 			FolderName: *output,
