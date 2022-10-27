@@ -3,7 +3,7 @@ package integrator
 import (
 	"context"
 
-	"github.com/Pavel7004/GraphPlot/pkg/circuit"
+	"github.com/Pavel7004/GraphPlot/pkg/adapters/circuit"
 )
 
 type NewIntFunc func(begin, end float64, step float64, saveFn func(t float64, x *circuit.Circuit)) Integrator
