@@ -49,10 +49,10 @@ func (si *ThreeEighthInt) Integrate(ctx context.Context, circ *circuit.Circuit) 
 
 		k1 := circ.GetDerivative()
 		k2 := circ.Clone().ApplyDerivative(si.step/3, k1).GetDerivative()
-		k3 := circ.Clone().ApplyDerivative(si.step, k1.WeighCopy(-1.0/3.0).Add(1, k2)).GetDerivative()
-		k4 := circ.Clone().ApplyDerivative(si.step, k1.WeighCopy(1).Add(-1, k2).Add(1, k3)).GetDerivative()
+		k3 := circ.Clone().ApplyDerivative(-si.step/3, k1).ApplyDerivative(si.step, k2).GetDerivative()
+		k4 := circ.Clone().ApplyDerivative(si.step, k1).ApplyDerivative(-si.step, k2).ApplyDerivative(si.step, k3).GetDerivative()
 
-		kn := k1.WeighCopy(1.0/8).Add(3.0/8, k2).Add(3.0/8, k3).Add(1.0/8, k4)
+		kn := k1.WeighCopy(1.0/8.0).Add(3.0/8.0, k2).Add(3.0/8.0, k3).Add(1.0/8.0, k4)
 		if !circ.CheckDerivative(si.step, kn) {
 			si.step = circ.CalculateOptimalStep(si.step, kn)
 
