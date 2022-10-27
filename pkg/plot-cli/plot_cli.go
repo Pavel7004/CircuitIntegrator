@@ -94,7 +94,7 @@ func (p *PlotterCli) PlotDiffSingleTrigger(ctx context.Context, int integrator.N
 	s := p.Settings
 
 	gr := plotter.NewInfoPlotter(s.BuffSize, s.Dpi)
-	gr.SetYLabel("X(t) %")
+	gr.SetYLabel("X(t), %")
 
 	theory := p.Circuit.GetLoadVoltageFunc()
 
