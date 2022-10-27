@@ -62,9 +62,9 @@ func (p *PlotterCli) Plot(ctx context.Context) {
 
 	for _, int := range p.integrators {
 		p.wg.Add(3)
-		p.PlotSingleTrigger(ctx, int)
-		p.PlotDiffSingleTrigger(ctx, int)
-		p.PlotMultiTrigger(ctx, int)
+		go p.PlotSingleTrigger(ctx, int)
+		go p.PlotDiffSingleTrigger(ctx, int)
+		go p.PlotMultiTrigger(ctx, int)
 	}
 
 	p.wg.Wait()
