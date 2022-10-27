@@ -2,7 +2,6 @@ package midpoint
 
 import (
 	"context"
-	"math"
 
 	"github.com/Pavel7004/Common/tracing"
 
@@ -53,7 +52,6 @@ func (mi *MidpointInt) Integrate(ctx context.Context, circ *circuit.Circuit) flo
 
 		if !circ.CheckDerivative(mi.step, k2) {
 			mi.step = circ.CalculateOptimalStep(mi.step, k2)
-			mi.step = math.Cbrt(mi.step)
 
 			last = true
 		}

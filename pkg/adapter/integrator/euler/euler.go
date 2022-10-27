@@ -2,7 +2,6 @@ package euler
 
 import (
 	"context"
-	"math"
 
 	"github.com/Pavel7004/Common/tracing"
 
@@ -52,7 +51,6 @@ func (ei *EulerInt) Integrate(ctx context.Context, circ *circuit.Circuit) float6
 
 		if !circ.CheckDerivative(ei.step, k1) {
 			ei.step = circ.CalculateOptimalStep(ei.step, k1)
-			ei.step = math.Sqrt(ei.step)
 
 			last = true
 		}

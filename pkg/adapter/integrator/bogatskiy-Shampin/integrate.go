@@ -2,7 +2,6 @@ package bogatskiyshampin
 
 import (
 	"context"
-	"math"
 
 	"github.com/Pavel7004/Common/tracing"
 
@@ -55,7 +54,6 @@ func (si *ShapinInt) Integrate(ctx context.Context, circ *circuit.Circuit) float
 		kn := k1.WeighCopy(2.0/9).Add(1.0/3, k2).Add(4.0/9, k3)
 		if !circ.CheckDerivative(si.step, kn) {
 			si.step = circ.CalculateOptimalStep(si.step, kn)
-			si.step = math.Sqrt(math.Sqrt(si.step))
 
 			last = true
 		}
