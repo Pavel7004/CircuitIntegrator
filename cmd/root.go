@@ -27,11 +27,11 @@ import (
 var cfgFile string
 
 var rootCmd = &cobra.Command{
-	Use:   "plotter",
+	Use:   "graph",
 	Short: "Plotting app",
 	Long: `Application for generating plots for specified circuit.
 
-Example: plotter plot -d 300 -s 0.1 -o results
+Example: graph plot -d 300 -s 0.1 -o results
 
 This will create directory results/ and put plot images into it.`,
 }
@@ -46,7 +46,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/plotter/config.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/graph/config.yaml)")
 }
 
 func initConfig() {
@@ -56,7 +56,7 @@ func initConfig() {
 		home, err := os.UserHomeDir()
 		cobra.CheckErr(err)
 
-		viper.AddConfigPath(path.Join(home, "config", "plotter"))
+		viper.AddConfigPath(path.Join(home, "config", "graph"))
 		viper.AddConfigPath(".")
 		viper.SetConfigType("yaml")
 		viper.SetConfigName("config")
