@@ -19,6 +19,7 @@ import (
 	"os"
 	"path"
 
+	"github.com/Pavel7004/GraphPlot/pkg/infra/config"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -62,9 +63,7 @@ func initConfig() {
 		viper.SetConfigName("config")
 	}
 
-	viper.AutomaticEnv()
-
-	if err := viper.ReadInConfig(); err != nil {
-		log.Warn().Err(err).Msg("Failed to read config")
+	if err := config.Read(); err != nil {
+		log.Info().Err(err).Msg("Failed to read config file.")
 	}
 }
