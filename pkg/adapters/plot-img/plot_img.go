@@ -110,7 +110,7 @@ func (ip *InfoPlotter) PlotFunc(color color.Color, fn func(x float64) float64) {
 
 	pFn.Color = color
 	pFn.Width = vg.Points(1)
-	pFn.Samples = 200
+	pFn.Samples = 500
 
 	ip.plot.Add(pFn)
 }
