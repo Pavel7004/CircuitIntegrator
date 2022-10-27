@@ -16,6 +16,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 */package cmd
 
 import (
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 
 	"github.com/Pavel7004/GraphPlot/pkg/adapters/http"
@@ -26,12 +27,15 @@ var serverCmd = &cobra.Command{
 	Use:   "server",
 	Short: "Start server",
 	Long: `Start server hosting plotting website.
-`,
+
+Example: graph server -h localhost -p 8088
+
+This will start server on localhost:8088`,
 	Run: func(cmd *cobra.Command, args []string) {
 		s := http.New()
 
 		if err := s.Run(); err != nil {
-			panic(err)
+			log.Error().Err(err).Msg("Error during server operation.")
 		}
 	},
 }
