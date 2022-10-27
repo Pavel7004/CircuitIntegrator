@@ -50,8 +50,8 @@ func NewPlotterCli(circuit *circuit.Circuit, settings *Settings) *PlotterCli {
 	return p
 }
 
-func (p *PlotterCli) Plot(ctx context.Context) {
-	span, ctx := tracing.StartSpanFromContext(ctx)
+func (p *PlotterCli) Plot() {
+	span, ctx := tracing.StartSpanFromContext(context.Background())
 	defer span.Finish()
 
 	s := p.Settings
