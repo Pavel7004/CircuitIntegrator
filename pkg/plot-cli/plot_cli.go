@@ -6,6 +6,7 @@ import (
 	"math"
 	"os"
 	"path"
+	"sync"
 
 	misc "github.com/Pavel7004/Common/misc"
 	"github.com/Pavel7004/Common/tracing"
@@ -26,6 +27,7 @@ type PlotterCli struct {
 	Settings *Settings
 	Circuit  *circuit.Circuit
 
+	wg          *sync.WaitGroup
 	integrators []integrator.NewIntFunc
 }
 
@@ -34,6 +36,7 @@ func NewPlotterCli(circuit *circuit.Circuit, settings *Settings) *PlotterCli {
 
 	p.Circuit = circuit
 	p.Settings = settings
+	p.wg = new(sync.WaitGroup)
 
 	p.integrators = []integrator.NewIntFunc{
 		euler.NewEulerInt,
@@ -57,73 +60,79 @@ func (p *PlotterCli) Plot(ctx context.Context) {
 		panic(err)
 	}
 
-	p.PlotSingleTrigger(ctx)
-	p.PlotDiffSingleTrigger(ctx)
-	p.PlotMultiTrigger(ctx)
+	for _, int := range p.integrators {
+		p.wg.Add(3)
+		p.PlotSingleTrigger(ctx, int)
+		p.PlotDiffSingleTrigger(ctx, int)
+		p.PlotMultiTrigger(ctx, int)
+	}
+
+	p.wg.Wait()
 }
 
-func (p *PlotterCli) PlotSingleTrigger(ctx context.Context) {
+func (p *PlotterCli) PlotSingleTrigger(ctx context.Context, int integrator.NewIntFunc) {
 	s := p.Settings
 
-	for _, int := range p.integrators {
-		gr := plotter.NewInfoPlotter(s.BuffSize, s.Dpi)
+	gr := plotter.NewInfoPlotter(s.BuffSize, s.Dpi)
 
-		pointgenerator.GeneratePoints(ctx, &pointgenerator.Args{
-			Circuit: p.Circuit,
-			Step:    s.Step,
-			SaveFn: func(t float64, x *circuit.Circuit) {
-				gr.AddPoint(t, x.GetLoadVoltage())
-			},
-			NewIntFn: int,
-		})
-		gr.PlotFunc(color.RGBA{R: 255, A: 255}, p.Circuit.GetLoadVoltageFunc())
+	pointgenerator.GeneratePoints(ctx, &pointgenerator.Args{
+		Circuit: p.Circuit,
+		Step:    s.Step,
+		SaveFn: func(t float64, x *circuit.Circuit) {
+			gr.AddPoint(t, x.GetLoadVoltage())
+		},
+		NewIntFn: int,
+	})
+	gr.PlotFunc(color.RGBA{R: 255, A: 255}, p.Circuit.GetLoadVoltageFunc())
 
-		gr.SaveToFile(ctx, path.Join(s.FolderName, misc.GetFuncModule(int)+"_theory.png"))
-	}
+	gr.SaveToFile(ctx, path.Join(s.FolderName, misc.GetFuncModule(int)+"_theory.png"))
+
+	p.wg.Done()
 }
 
-func (p *PlotterCli) PlotDiffSingleTrigger(ctx context.Context) {
+func (p *PlotterCli) PlotDiffSingleTrigger(ctx context.Context, int integrator.NewIntFunc) {
 	s := p.Settings
 
-	for _, int := range p.integrators {
-		gr := plotter.NewInfoPlotter(s.BuffSize, s.Dpi)
+	gr := plotter.NewInfoPlotter(s.BuffSize, s.Dpi)
+	gr.SetYLabel("X(t) %")
 
-		theory := p.Circuit.GetLoadVoltageFunc()
+	theory := p.Circuit.GetLoadVoltageFunc()
 
-		pointgenerator.GeneratePoints(ctx, &pointgenerator.Args{
-			Circuit: p.Circuit,
-			Step:    s.Step,
-			SaveFn: func(t float64, x *circuit.Circuit) {
-				vol := x.GetLoadVoltage()
-				if vol < 0.0001 {
-					gr.AddPoint(t, 0.0)
-				} else {
-					gr.AddPoint(t, math.Abs(vol-theory(t))/vol*100)
-				}
-			},
-			NewIntFn: int,
-		})
+	pointgenerator.GeneratePoints(ctx, &pointgenerator.Args{
+		Circuit: p.Circuit,
+		Step:    s.Step,
+		SaveFn: func(t float64, x *circuit.Circuit) {
+			vol := x.GetLoadVoltage()
+			if vol < 0.0001 {
+				gr.AddPoint(t, 0.0)
+			} else {
+				gr.AddPoint(t, math.Abs(vol-theory(t))/vol*100)
+			}
+		},
+		NewIntFn: int,
+	})
 
-		gr.SaveToFile(ctx, path.Join(s.FolderName, misc.GetFuncModule(int)+"_diffErr.png"))
-	}
+	gr.SaveToFile(ctx, path.Join(s.FolderName, misc.GetFuncModule(int)+"_diffErr.png"))
+
+	p.wg.Done()
 }
 
-func (p *PlotterCli) PlotMultiTrigger(ctx context.Context) {
+func (p *PlotterCli) PlotMultiTrigger(ctx context.Context, int integrator.NewIntFunc) {
 	s := p.Settings
 
-	for _, int := range p.integrators {
-		gr := plotter.NewInfoPlotter(s.BuffSize, s.Dpi)
+	gr := plotter.NewInfoPlotter(s.BuffSize, s.Dpi)
 
-		ctx := context.WithValue(ctx, pointgenerator.EndPoint, 200.0)
-		pointgenerator.GeneratePoints(ctx, &pointgenerator.Args{
-			Circuit: p.Circuit,
-			Step:    s.Step,
-			SaveFn: func(t float64, x *circuit.Circuit) {
-				gr.AddPoint(t, x.GetLoadVoltage())
-			},
-			NewIntFn: int,
-		})
+	ctx = context.WithValue(ctx, pointgenerator.EndPoint, 200.0)
+	pointgenerator.GeneratePoints(ctx, &pointgenerator.Args{
+		Circuit: p.Circuit,
+		Step:    s.Step,
+		SaveFn: func(t float64, x *circuit.Circuit) {
+			gr.AddPoint(t, x.GetLoadVoltage())
+		},
+		NewIntFn: int,
+	})
 
-		gr.SaveToFile(ctx, path.Join(s.FolderName, misc.GetFuncModule(int)+"_multiTicks.png"))
-	}
+	gr.SaveToFile(ctx, path.Join(s.FolderName, misc.GetFuncModule(int)+"_multiTicks.png"))
+
+	p.wg.Done()
 }
