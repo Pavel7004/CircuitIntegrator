@@ -18,6 +18,6 @@ lint:
 clear:
 	rm -rf graph */__debug_bin __debug_bin results
 
-.PHONY: all clear jaeger lint
+.PHONY: all clear jaeger lint graph
 
 # end
