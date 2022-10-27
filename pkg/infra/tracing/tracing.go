@@ -3,7 +3,6 @@ package tracing
 import (
 	"io"
 
-	"github.com/Pavel7004/Common/tracing"
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/uber/jaeger-client-go"
 	jaegercfg "github.com/uber/jaeger-client-go/config"

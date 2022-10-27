@@ -5,7 +5,7 @@ import (
 
 	"github.com/Pavel7004/Common/tracing"
 
-	"github.com/Pavel7004/GraphPlot/pkg/circuit"
+	"github.com/Pavel7004/GraphPlot/pkg/adapters/circuit"
 )
 
 type endPoint string

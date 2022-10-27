@@ -11,16 +11,16 @@ import (
 	misc "github.com/Pavel7004/Common/misc"
 	"github.com/Pavel7004/Common/tracing"
 
-	"github.com/Pavel7004/GraphPlot/pkg/adapter/integrator"
-	bogatskiyshampin "github.com/Pavel7004/GraphPlot/pkg/adapter/integrator/bogatskiy-Shampin"
-	"github.com/Pavel7004/GraphPlot/pkg/adapter/integrator/euler"
-	"github.com/Pavel7004/GraphPlot/pkg/adapter/integrator/midpoint"
-	midpointimplicit "github.com/Pavel7004/GraphPlot/pkg/adapter/integrator/midpoint-implicit"
-	threeeighth "github.com/Pavel7004/GraphPlot/pkg/adapter/integrator/three-eighth"
-	"github.com/Pavel7004/GraphPlot/pkg/adapter/integrator/trapeziod"
-	plotter "github.com/Pavel7004/GraphPlot/pkg/adapter/plot-img"
-	"github.com/Pavel7004/GraphPlot/pkg/circuit"
-	pointgenerator "github.com/Pavel7004/GraphPlot/pkg/point-generator"
+	"github.com/Pavel7004/GraphPlot/pkg/adapters/circuit"
+	"github.com/Pavel7004/GraphPlot/pkg/adapters/integrator"
+	bogatskiyshampin "github.com/Pavel7004/GraphPlot/pkg/adapters/integrator/bogatskiy-Shampin"
+	"github.com/Pavel7004/GraphPlot/pkg/adapters/integrator/euler"
+	"github.com/Pavel7004/GraphPlot/pkg/adapters/integrator/midpoint"
+	midpointimplicit "github.com/Pavel7004/GraphPlot/pkg/adapters/integrator/midpoint-implicit"
+	threeeighth "github.com/Pavel7004/GraphPlot/pkg/adapters/integrator/three-eighth"
+	"github.com/Pavel7004/GraphPlot/pkg/adapters/integrator/trapeziod"
+	plotter "github.com/Pavel7004/GraphPlot/pkg/adapters/plot-img"
+	pointgenerator "github.com/Pavel7004/GraphPlot/pkg/components/point-generator"
 )
 
 type PlotterCli struct {

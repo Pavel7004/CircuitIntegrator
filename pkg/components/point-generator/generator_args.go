@@ -1,8 +1,8 @@
 package pointgenerator
 
 import (
-	"github.com/Pavel7004/GraphPlot/pkg/adapter/integrator"
-	"github.com/Pavel7004/GraphPlot/pkg/circuit"
+	"github.com/Pavel7004/GraphPlot/pkg/adapters/circuit"
+	"github.com/Pavel7004/GraphPlot/pkg/adapters/integrator"
 )
 
 type Args struct {

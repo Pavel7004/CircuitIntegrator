@@ -4,8 +4,9 @@ import (
 	"context"
 
 	common "github.com/Pavel7004/Common/tracing"
-	"github.com/Pavel7004/GraphPlot/pkg/adapter/cli"
-	. "github.com/Pavel7004/GraphPlot/pkg/components/circuit"
+
+	. "github.com/Pavel7004/GraphPlot/pkg/adapters/circuit"
+	"github.com/Pavel7004/GraphPlot/pkg/adapters/cli"
 	plotcli "github.com/Pavel7004/GraphPlot/pkg/components/plot-cli"
 	"github.com/Pavel7004/GraphPlot/pkg/infra/tracing"
 )

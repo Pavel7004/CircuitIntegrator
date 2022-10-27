@@ -1,6 +1,8 @@
 package main
 
-import "github.com/Pavel7004/GraphPlot/pkg/adapter/http"
+import (
+	"github.com/Pavel7004/GraphPlot/pkg/adapter/http"
+)
 
 func main() {
 	s := http.New()
