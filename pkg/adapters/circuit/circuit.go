@@ -4,7 +4,7 @@ import (
 	"math"
 )
 
-const FloatPointAccuracy = 0.00000001
+const FloatPointAccuracy = 1e-10
 
 type Circuit struct {
 	supplyVoltage     float64
