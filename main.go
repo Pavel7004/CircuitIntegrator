@@ -18,15 +18,15 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 import (
 	"os"
 
+	"github.com/Pavel7004/Common/tracing"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
 	"github.com/Pavel7004/GraphPlot/cmd"
-	"github.com/Pavel7004/GraphPlot/pkg/infra/tracing"
 )
 
 func main() {
-	closer := tracing.Init()
+	closer := tracing.InitDefaultJaeger("GraphPlot")
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stdout})
 
 	cmd.Execute()
