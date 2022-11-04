@@ -19,13 +19,17 @@ import (
 	"os"
 	"path"
 
-	"github.com/Pavel7004/GraphPlot/pkg/infra/config"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/Pavel7004/GraphPlot/pkg/infra/config"
 )
 
-var cfgFile string
+var (
+	cfgFile string
+	debug   bool
+)
 
 var rootCmd = &cobra.Command{
 	Use:   "graph",
@@ -48,6 +52,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/graph/config.yaml)")
+	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "Enable debug mode")
 }
 
 func initConfig() {

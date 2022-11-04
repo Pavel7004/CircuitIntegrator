@@ -31,6 +31,9 @@ Example: graph server
 
 This will start server on localhost:8088. To modify hostname and port create config file.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		if !debug {
+			http.EnableRelease()
+		}
 		s := http.New()
 
 		if err := s.Run(); err != nil {
