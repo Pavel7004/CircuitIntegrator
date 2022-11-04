@@ -1,17 +1,23 @@
 package config
 
-import "github.com/spf13/viper"
+import (
+	"time"
+
+	"github.com/spf13/viper"
+)
 
 type Config struct {
-	Hostname string `mapstructure:"hostname"`
-	Port     string `mapstructure:"port"`
+	Hostname string        `mapstructure:"hostname"`
+	Port     string        `mapstructure:"port"`
+	Timeout  time.Duration `mapstructure:"timeout"`
 }
 
 var config *Config
 
 func Read() error {
 	viper.SetDefault("hostname", "localhost")
-	viper.SetDefault("port", "8088")
+	viper.SetDefault("port", "8000")
+	viper.SetDefault("timeout", "10s")
 
 	viper.AutomaticEnv()
 
