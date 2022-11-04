@@ -9,6 +9,6 @@ type Args struct {
 	Circuit *circuit.Circuit
 	Step    float64
 
-	SaveFn   func(t float64, x *circuit.Circuit)
+	SaveFn   func(t float64, x *circuit.Circuit) error
 	NewIntFn integrator.NewIntFunc
 }

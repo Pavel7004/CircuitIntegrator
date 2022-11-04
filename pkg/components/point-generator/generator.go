@@ -4,8 +4,6 @@ import (
 	"context"
 
 	"github.com/Pavel7004/Common/tracing"
-
-	"github.com/Pavel7004/GraphPlot/pkg/adapters/circuit"
 )
 
 type endPoint string
@@ -17,7 +15,7 @@ func GeneratePoints(ctx context.Context, args *Args) {
 	defer span.Finish()
 
 	var (
-		circuit *circuit.Circuit = args.Circuit.Clone()
+		circuit = args.Circuit.Clone()
 
 		left  float64
 		right float64
