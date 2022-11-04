@@ -4,7 +4,7 @@ import (
 	"math"
 )
 
-const FloatPointAccuracy = 1e-10
+const FloatPointAccuracy = 1e-16
 
 type Circuit struct {
 	supplyVoltage     float64
@@ -13,14 +13,13 @@ type Circuit struct {
 	stagesCount       uint
 	gapTriggerVoltage float64
 	holdingVoltage    float64
-	load              LoadComponents
-	tolerance         float64
+	load              *LoadComponents
 	state             circuitState
 	tau               []float64
 	voltagesCap       []float64
 }
 
-func New(chargeComp ChargeComponents, load LoadComponents) *Circuit {
+func New(chargeComp *ChargeComponents, load *LoadComponents) *Circuit {
 	load.chargeCapacity = chargeComp.Capacity / float64(chargeComp.StagesCount)
 	load.tau = load.chargeCapacity * load.Resistance
 	circ := &Circuit{
@@ -31,7 +30,6 @@ func New(chargeComp ChargeComponents, load LoadComponents) *Circuit {
 		gapTriggerVoltage: chargeComp.GapTriggerVoltage,
 		holdingVoltage:    chargeComp.HoldingVoltage,
 		load:              load,
-		tolerance:         0.0001,
 		state:             nil,
 		tau:               make([]float64, chargeComp.StagesCount),
 		voltagesCap:       make([]float64, chargeComp.StagesCount),
@@ -106,7 +104,7 @@ func (st *Circuit) GetSystemCurrent() float64 {
 }
 
 func (st *Circuit) Clone() *Circuit {
-	load := LoadComponents{
+	load := &LoadComponents{
 		Resistance:     st.load.Resistance,
 		chargeCapacity: st.load.chargeCapacity,
 		tau:            st.load.tau,
@@ -119,7 +117,6 @@ func (st *Circuit) Clone() *Circuit {
 		gapTriggerVoltage: st.gapTriggerVoltage,
 		holdingVoltage:    st.holdingVoltage,
 		load:              load,
-		tolerance:         st.tolerance,
 		state:             nil,
 		tau:               st.tau,
 		voltagesCap:       make([]float64, 0, st.stagesCount),

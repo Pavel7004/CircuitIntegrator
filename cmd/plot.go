@@ -43,7 +43,7 @@ Example: graph plot -d 300 -s 0.1 -o results
 
 This will create directory results/ and put plot images into it.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		chargeCirc := circuit.ChargeComponents{
+		chargeCirc := &circuit.ChargeComponents{
 			SupplyVoltage:     *supplyVol,
 			Capacity:          0.001,
 			Resistance:        5000,
@@ -52,7 +52,7 @@ This will create directory results/ and put plot images into it.`,
 			HoldingVoltage:    1,
 		}
 
-		load := circuit.LoadComponents{
+		load := &circuit.LoadComponents{
 			Resistance: *loadRes,
 		}
 
