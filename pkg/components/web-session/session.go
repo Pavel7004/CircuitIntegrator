@@ -117,5 +117,4 @@ func (s *Session) plot(ctx context.Context, endCh chan struct{}, intNum int, cir
 	}); err != nil {
 		log.Error().Err(err).Msg("Failed to send \"end\" signal")
 	}
-
 }

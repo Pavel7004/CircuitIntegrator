@@ -2,7 +2,6 @@ package handler
 
 import (
 	"html/template"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -10,6 +9,7 @@ import (
 
 	session "github.com/Pavel7004/GraphPlot/pkg/components/web-session"
 	"github.com/Pavel7004/GraphPlot/pkg/domain"
+	"github.com/Pavel7004/GraphPlot/pkg/infra/config"
 )
 
 type Handler struct {
@@ -19,10 +19,17 @@ type Handler struct {
 }
 
 func New() *Handler {
-	return &Handler{
-		upgrader: &websocket.Upgrader{HandshakeTimeout: 5 * time.Second, ReadBufferSize: 1024 * 1024, WriteBufferSize: 1024 * 1024},
-		sessions: []*session.Session{},
+	cfg := config.Get()
+	h := new(Handler)
+
+	h.upgrader = &websocket.Upgrader{
+		HandshakeTimeout: cfg.Timeout,
+		ReadBufferSize:   1024 * 1024,
+		WriteBufferSize:  1024 * 1024,
 	}
+	h.sessions = []*session.Session{}
+
+	return h
 }
 
 func (h *Handler) SendError(c *gin.Context, err error) {
