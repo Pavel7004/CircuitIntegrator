@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>GraphPlot</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+        <link rel="manifest" href="/static/site.webmanifest">
+
+        <script src="https://cdn.plot.ly/plotly-2.16.1.min.js"></script>
+    </head>
+    <label id="status"></label><br><br>
+
+    <body>
+    <label for="supplVolts">Supply voltage (V):</label> <input type="number" size="40" id="supplVolts" value="6000"><br>
+    <br>
+    <label for="capacity">Capacity (mF):</label> <input type="number" size="40" id="capacity" value="1"><br>
+    <br>
+    <label for="resistance">Resistance (Ohm):</label> <input type="number" size="40" id="resistance" value="5000"><br>
+    <br>
+    <label for="stagesCount">Number of stages:</label> <input type="number" size="40" id="stagesCount" value="6"><br>
+    <br>
+    <label for="gapVolts">Gap trigger voltage (V):</label> <input type="number" size="40" id="gapVolts" value="5700"><br>
+    <br>
+    <label for="holdingVolts">Holding voltage (V):</label> <input type="number" size="40" id="holdingVolts" value="1"><br>
+    <br>
+    <label for="loadResistance">Load resistance (Ohm):</label> <input type="number" size="40" id="loadResistance" value="10000"><br>
+    <br>
+    <label for="step">Step:</label> <input type="number" size="40" id="step" value="0.1"><br>
+    <br>
+    <label for="intNum">Integration method</label> <select id="intNum">
+        {{range $key, $val := .Integrators}}
+        <option value="{{ $key }}">{{ $val }}</option>
+        {{end}}
+    </select>
+    <button onclick="buttonClick()">Начать решение системы</button>
+
+    <div id="plotter" style="width:100%;height:100%;"></div>
+    <script src="/static/script.js"></script>
+    </body>
+</html>
