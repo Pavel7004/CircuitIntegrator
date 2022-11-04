@@ -4,7 +4,6 @@ import (
 	"context"
 	"image"
 	"image/color"
-	"os"
 
 	"github.com/Pavel7004/Common/tracing"
 	"gonum.org/v1/plot"
@@ -12,7 +11,6 @@ import (
 	"gonum.org/v1/plot/vg"
 	"gonum.org/v1/plot/vg/draw"
 	"gonum.org/v1/plot/vg/vgimg"
-	"gonum.org/v1/plot/vg/vgsvg"
 )
 
 type InfoPlotter struct {
@@ -24,10 +22,7 @@ type InfoPlotter struct {
 }
 
 func NewInfoPlotter(bufferSize, dpi int) *InfoPlotter {
-	p, err := plot.New()
-	if err != nil {
-		panic(err)
-	}
+	p := plot.New()
 
 	p.Add(plotter.NewGrid())
 	p.X.Label.Text = "t"
@@ -61,24 +56,6 @@ func (ip *InfoPlotter) DrawInImage(ctx context.Context) image.Image {
 	ip.plot.Draw(draw.New(c))
 
 	return c.Image()
-}
-
-func (ip *InfoPlotter) WriteSVGToStdout(ctx context.Context) {
-	span, _ := tracing.StartSpanFromContext(ctx)
-	span.SetTag("buffer size", ip.bufferSize)
-
-	defer span.Finish()
-
-	if len(ip.points) > 1 {
-		ip.plotPoints()
-	}
-
-	c := vgsvg.New(3*vg.Inch, 3*vg.Inch)
-
-	ip.plot.Draw(draw.New(c))
-	if _, err := c.WriteTo(os.Stdout); err != nil {
-		panic(err)
-	}
 }
 
 func (ip *InfoPlotter) SaveToFile(ctx context.Context, filename string) {
