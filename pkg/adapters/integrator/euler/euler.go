@@ -13,12 +13,12 @@ type EulerInt struct {
 	begin  float64
 	end    float64
 	step   float64
-	saveFn func(t float64, x *circuit.Circuit)
+	saveFn func(t float64, x *circuit.Circuit) error
 }
 
 var _ integrator.Integrator = (*EulerInt)(nil)
 
-func NewEulerInt(begin, end, step float64, saveFn func(t float64, x *circuit.Circuit)) integrator.Integrator {
+func NewEulerInt(begin, end, step float64, saveFn func(t float64, x *circuit.Circuit) error) integrator.Integrator {
 	return &EulerInt{
 		begin:  begin,
 		end:    end,
@@ -29,15 +29,16 @@ func NewEulerInt(begin, end, step float64, saveFn func(t float64, x *circuit.Cir
 
 func (ei *EulerInt) Integrate(ctx context.Context, circ *circuit.Circuit) float64 {
 	span, _ := tracing.StartSpanFromContext(ctx)
-	span.SetTag("StartPoint", ei.begin)
-	span.SetTag("EndPoint", ei.end)
-	span.SetTag("Step", ei.step)
-	span.SetTag("RK-stages", 1)
+	span.SetTag("start-point", ei.begin)
+	span.SetTag("end-point", ei.end)
+	span.SetTag("step", ei.step)
+	span.SetTag("rk-stages", 1)
 
 	defer span.Finish()
 
 	var (
-		t    = ei.begin
+		t = ei.begin
+
 		last bool
 	)
 
@@ -58,7 +59,10 @@ func (ei *EulerInt) Integrate(ctx context.Context, circ *circuit.Circuit) float6
 		circ.ApplyDerivative(ei.step, k1)
 		t += ei.step
 
-		ei.saveFn(t, circ)
+		if err := ei.saveFn(t, circ); err != nil {
+			span.SetTag("Error", err)
+			break
+		}
 	}
 
 	span.SetTag("finish-point", t)

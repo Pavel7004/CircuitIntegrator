@@ -13,12 +13,12 @@ type TrapezoidInt struct {
 	begin  float64
 	end    float64
 	step   float64
-	saveFn func(t float64, x *circuit.Circuit)
+	saveFn func(t float64, x *circuit.Circuit) error
 }
 
 var _ integrator.Integrator = (*TrapezoidInt)(nil)
 
-func NewTrapezoidInt(begin, end, step float64, saveFn func(t float64, x *circuit.Circuit)) integrator.Integrator {
+func NewTrapezoidInt(begin, end, step float64, saveFn func(t float64, x *circuit.Circuit) error) integrator.Integrator {
 	return &TrapezoidInt{
 		begin:  begin,
 		end:    end,
@@ -37,7 +37,8 @@ func (si *TrapezoidInt) Integrate(ctx context.Context, circ *circuit.Circuit) fl
 	defer span.Finish()
 
 	var (
-		t    = si.begin
+		t = si.begin
+
 		last bool
 	)
 
@@ -61,7 +62,10 @@ func (si *TrapezoidInt) Integrate(ctx context.Context, circ *circuit.Circuit) fl
 		circ.ApplyDerivative(si.step, kn)
 		t += si.step
 
-		si.saveFn(t, circ)
+		if err := si.saveFn(t, circ); err != nil {
+			span.SetTag("Error", err)
+			break
+		}
 	}
 
 	span.SetTag("finish-point", t)

@@ -13,12 +13,12 @@ type ShapinInt struct {
 	begin  float64
 	end    float64
 	step   float64
-	saveFn func(t float64, x *circuit.Circuit)
+	saveFn func(t float64, x *circuit.Circuit) error
 }
 
 var _ integrator.Integrator = (*ShapinInt)(nil)
 
-func NewShampinInt(begin, end, step float64, saveFn func(t float64, x *circuit.Circuit)) integrator.Integrator {
+func NewShampinInt(begin, end, step float64, saveFn func(t float64, x *circuit.Circuit) error) integrator.Integrator {
 	return &ShapinInt{
 		begin:  begin,
 		end:    end,
@@ -61,7 +61,10 @@ func (si *ShapinInt) Integrate(ctx context.Context, circ *circuit.Circuit) float
 		circ.ApplyDerivative(si.step, kn)
 		t += si.step
 
-		si.saveFn(t, circ)
+		if err := si.saveFn(t, circ); err != nil {
+			span.SetTag("Error", err)
+			break
+		}
 	}
 
 	span.SetTag("finish-point", t)

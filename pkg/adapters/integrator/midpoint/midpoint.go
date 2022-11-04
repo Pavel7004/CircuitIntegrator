@@ -13,12 +13,12 @@ type MidpointInt struct {
 	begin  float64
 	end    float64
 	step   float64
-	saveFn func(t float64, x *circuit.Circuit)
+	saveFn func(t float64, x *circuit.Circuit) error
 }
 
 var _ integrator.Integrator = (*MidpointInt)(nil)
 
-func NewMidpointInt(begin, end, step float64, saveFn func(t float64, x *circuit.Circuit)) integrator.Integrator {
+func NewMidpointInt(begin, end, step float64, saveFn func(t float64, x *circuit.Circuit) error) integrator.Integrator {
 	return &MidpointInt{
 		begin:  begin,
 		end:    end,
@@ -37,11 +37,12 @@ func (mi *MidpointInt) Integrate(ctx context.Context, circ *circuit.Circuit) flo
 	defer span.Finish()
 
 	var (
-		t    = mi.begin
+		t = mi.begin
+
 		last bool
 	)
 
-	for !last && mi.step > 0 {
+	for !last {
 		if t+mi.step > mi.end {
 			last = true
 			mi.step = mi.end - t
@@ -59,7 +60,10 @@ func (mi *MidpointInt) Integrate(ctx context.Context, circ *circuit.Circuit) flo
 		circ.ApplyDerivative(mi.step, k2)
 		t += mi.step
 
-		mi.saveFn(t, circ)
+		if err := mi.saveFn(t, circ); err != nil {
+			span.SetTag("Error", err)
+			break
+		}
 	}
 
 	span.SetTag("finish-point", t)
