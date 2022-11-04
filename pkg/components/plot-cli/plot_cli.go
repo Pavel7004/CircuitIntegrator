@@ -13,22 +13,16 @@ import (
 
 	"github.com/Pavel7004/GraphPlot/pkg/adapters/circuit"
 	"github.com/Pavel7004/GraphPlot/pkg/adapters/integrator"
-	bogatskiyshampin "github.com/Pavel7004/GraphPlot/pkg/adapters/integrator/bogatskiy-Shampin"
-	"github.com/Pavel7004/GraphPlot/pkg/adapters/integrator/euler"
-	"github.com/Pavel7004/GraphPlot/pkg/adapters/integrator/midpoint"
-	midpointimplicit "github.com/Pavel7004/GraphPlot/pkg/adapters/integrator/midpoint-implicit"
-	threeeighth "github.com/Pavel7004/GraphPlot/pkg/adapters/integrator/three-eighth"
-	"github.com/Pavel7004/GraphPlot/pkg/adapters/integrator/trapeziod"
 	plotter "github.com/Pavel7004/GraphPlot/pkg/adapters/plot-img"
 	pointgenerator "github.com/Pavel7004/GraphPlot/pkg/components/point-generator"
+	"github.com/Pavel7004/GraphPlot/pkg/domain"
 )
 
 type PlotterCli struct {
 	Settings *Settings
 	Circuit  *circuit.Circuit
 
-	wg          *sync.WaitGroup
-	integrators []integrator.NewIntFunc
+	wg *sync.WaitGroup
 }
 
 func NewPlotterCli(circuit *circuit.Circuit, settings *Settings) *PlotterCli {
@@ -37,15 +31,6 @@ func NewPlotterCli(circuit *circuit.Circuit, settings *Settings) *PlotterCli {
 	p.Circuit = circuit
 	p.Settings = settings
 	p.wg = new(sync.WaitGroup)
-
-	p.integrators = []integrator.NewIntFunc{
-		euler.NewEulerInt,
-		midpoint.NewMidpointInt,
-		midpointimplicit.NewMidpointImplInt,
-		bogatskiyshampin.NewShampinInt,
-		threeeighth.NewThreeEighthInt,
-		trapeziod.NewTrapezoidInt,
-	}
 
 	return p
 }
@@ -60,7 +45,7 @@ func (p *PlotterCli) Plot() {
 		panic(err)
 	}
 
-	for _, int := range p.integrators {
+	for _, int := range domain.Integrators {
 		p.wg.Add(3)
 		go p.PlotSingleTrigger(ctx, int)
 		go p.PlotDiffSingleTrigger(ctx, int)
@@ -78,14 +63,16 @@ func (p *PlotterCli) PlotSingleTrigger(ctx context.Context, int integrator.NewIn
 	pointgenerator.GeneratePoints(ctx, &pointgenerator.Args{
 		Circuit: p.Circuit,
 		Step:    s.Step,
-		SaveFn: func(t float64, x *circuit.Circuit) {
+		SaveFn: func(t float64, x *circuit.Circuit) error {
 			gr.AddPoint(t, x.GetLoadVoltage())
+
+			return nil
 		},
 		NewIntFn: int,
 	})
 	gr.PlotFunc(color.RGBA{R: 255, A: 255}, p.Circuit.GetLoadVoltageFunc())
 
-	gr.SaveToFile(ctx, path.Join(s.FolderName, misc.GetFuncModule(int)+"_theory.png"))
+	gr.SaveToFile(ctx, path.Join(s.FolderName, misc.GetFuncModule(int)+"_theory.svg"))
 
 	p.wg.Done()
 }
@@ -101,18 +88,20 @@ func (p *PlotterCli) PlotDiffSingleTrigger(ctx context.Context, int integrator.N
 	pointgenerator.GeneratePoints(ctx, &pointgenerator.Args{
 		Circuit: p.Circuit,
 		Step:    s.Step,
-		SaveFn: func(t float64, x *circuit.Circuit) {
+		SaveFn: func(t float64, x *circuit.Circuit) error {
 			vol := x.GetLoadVoltage()
 			if vol < 0.0001 {
 				gr.AddPoint(t, 0.0)
 			} else {
 				gr.AddPoint(t, math.Abs(vol-theory(t))/vol*100)
 			}
+
+			return nil
 		},
 		NewIntFn: int,
 	})
 
-	gr.SaveToFile(ctx, path.Join(s.FolderName, misc.GetFuncModule(int)+"_diffErr.png"))
+	gr.SaveToFile(ctx, path.Join(s.FolderName, misc.GetFuncModule(int)+"_diffErr.svg"))
 
 	p.wg.Done()
 }
@@ -126,13 +115,15 @@ func (p *PlotterCli) PlotMultiTrigger(ctx context.Context, int integrator.NewInt
 	pointgenerator.GeneratePoints(ctx, &pointgenerator.Args{
 		Circuit: p.Circuit,
 		Step:    s.Step,
-		SaveFn: func(t float64, x *circuit.Circuit) {
+		SaveFn: func(t float64, x *circuit.Circuit) error {
 			gr.AddPoint(t, x.GetLoadVoltage())
+
+			return nil
 		},
 		NewIntFn: int,
 	})
 
-	gr.SaveToFile(ctx, path.Join(s.FolderName, misc.GetFuncModule(int)+"_multiTicks.png"))
+	gr.SaveToFile(ctx, path.Join(s.FolderName, misc.GetFuncModule(int)+"_multiTicks.svg"))
 
 	p.wg.Done()
 }
