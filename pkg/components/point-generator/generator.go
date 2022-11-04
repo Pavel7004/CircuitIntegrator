@@ -10,7 +10,7 @@ type endPoint string
 
 const EndPoint endPoint = "end"
 
-func GeneratePoints(ctx context.Context, args *Args) {
+func Generate(ctx context.Context, args *Args) {
 	span, ctx := tracing.StartSpanFromContext(ctx)
 	defer span.Finish()
 

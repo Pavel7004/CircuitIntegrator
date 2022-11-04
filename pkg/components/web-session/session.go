@@ -79,7 +79,7 @@ func (s *Session) plot(ctx context.Context, endCh chan struct{}, intNum int, cir
 	bufferX := make([]float64, 0, 10)
 	bufferY := make([]float64, 0, 10)
 
-	pointgenerator.GeneratePoints(ctx, &pointgenerator.Args{
+	pointgenerator.Generate(ctx, &pointgenerator.Args{
 		Circuit: circ,
 		Step:    step,
 		SaveFn: func(t float64, x *circuit.Circuit) error {

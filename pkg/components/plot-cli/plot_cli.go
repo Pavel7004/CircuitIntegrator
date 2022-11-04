@@ -60,7 +60,7 @@ func (p *PlotterCli) PlotSingleTrigger(ctx context.Context, int integrator.NewIn
 
 	gr := plotter.NewInfoPlotter(s.BuffSize, s.Dpi)
 
-	pointgenerator.GeneratePoints(ctx, &pointgenerator.Args{
+	pointgenerator.Generate(ctx, &pointgenerator.Args{
 		Circuit: p.Circuit,
 		Step:    s.Step,
 		SaveFn: func(t float64, x *circuit.Circuit) error {
@@ -85,7 +85,7 @@ func (p *PlotterCli) PlotDiffSingleTrigger(ctx context.Context, int integrator.N
 
 	theory := p.Circuit.GetLoadVoltageFunc()
 
-	pointgenerator.GeneratePoints(ctx, &pointgenerator.Args{
+	pointgenerator.Generate(ctx, &pointgenerator.Args{
 		Circuit: p.Circuit,
 		Step:    s.Step,
 		SaveFn: func(t float64, x *circuit.Circuit) error {
@@ -112,7 +112,7 @@ func (p *PlotterCli) PlotMultiTrigger(ctx context.Context, int integrator.NewInt
 	gr := plotter.NewInfoPlotter(s.BuffSize, s.Dpi)
 
 	ctx = context.WithValue(ctx, pointgenerator.EndPoint, 200.0)
-	pointgenerator.GeneratePoints(ctx, &pointgenerator.Args{
+	pointgenerator.Generate(ctx, &pointgenerator.Args{
 		Circuit: p.Circuit,
 		Step:    s.Step,
 		SaveFn: func(t float64, x *circuit.Circuit) error {
