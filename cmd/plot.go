@@ -23,45 +23,44 @@ import (
 )
 
 var (
-	supplyVol *float64
-	capCount  *uint
-	loadRes   *float64
-	step      *float64
-	output    *string
-	buffSize  *int
-	dpi       *int
+	supplyVol float64
+	capCount  uint
+	loadRes   float64
+	step      float64
+	output    string
+	buffSize  int
+	format    string
 )
 
 var plotCmd = &cobra.Command{
 	Use:   "plot",
 	Short: "Generate plot image",
 	Long: `Generate plot image in your directory.
+Available formats are: png, svg, tex, pdf, jpg, jpeg, eps, tif, tiff.
 
-Due to implementation don't support step less than 0.01.
+Example: graph plot -s 0.1 -o results -f png
 
-Example: graph plot -d 300 -s 0.1 -o results
-
-This will create directory results/ and put plot images into it.`,
+This will create directory results/ and put plot images in \"png\" format into it.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		chargeCirc := &circuit.ChargeComponents{
-			SupplyVoltage:     *supplyVol,
+			SupplyVoltage:     supplyVol,
 			Capacity:          0.001,
 			Resistance:        5000,
-			StagesCount:       *capCount,
+			StagesCount:       capCount,
 			GapTriggerVoltage: 5700,
 			HoldingVoltage:    1,
 		}
 
 		load := &circuit.LoadComponents{
-			Resistance: *loadRes,
+			Resistance: loadRes,
 		}
 
 		circ := circuit.New(chargeCirc, load)
 		p := plotcli.NewPlotterCli(circ, &plotcli.Settings{
-			Step:       *step,
-			FolderName: *output,
-			BuffSize:   *buffSize,
-			Dpi:        *dpi,
+			Step:       step,
+			FolderName: output,
+			Format:     format,
+			BuffSize:   buffSize,
 		})
 
 		p.Plot()
@@ -71,12 +70,13 @@ This will create directory results/ and put plot images into it.`,
 func init() {
 	rootCmd.AddCommand(plotCmd)
 
-	capCount = plotCmd.Flags().UintP("capacitors", "c", 6, "Change number of capacitors in circuit")
-	supplyVol = plotCmd.Flags().Float64P("supply-voltage", "v", 6000, "Change supply voltage in circuit")
-	loadRes = plotCmd.Flags().Float64P("load-resistance", "l", 10000, "Change load resistance value")
+	plotCmd.Flags().UintVarP(&capCount, "capacitors", "c", 6, "change number of capacitors in circuit")
+	plotCmd.Flags().Float64VarP(&supplyVol, "supply-voltage", "v", 6000, "change supply voltage in circuit")
+	plotCmd.Flags().Float64VarP(&loadRes, "load-resistance", "l", 10000, "change load resistance value")
 
-	step = plotCmd.Flags().Float64P("step", "s", 0.1, "Change default step amount")
-	output = plotCmd.Flags().StringP("output", "o", "results", "Change results directory name")
-	buffSize = plotCmd.Flags().Int("buffer-size", 100, "Change size of line-draw buffer")
-	dpi = plotCmd.Flags().Int("dpi", 320, "Change dpi of resulting images")
+	plotCmd.Flags().Float64VarP(&step, "step", "s", 0.1, "change default step amount")
+	plotCmd.Flags().StringVarP(&output, "output", "o", "results", "change results directory name")
+	plotCmd.Flags().StringVarP(&format, "format", "f", "svg", "change resulting images format")
+
+	plotCmd.Flags().IntVar(&buffSize, "buffer-size", 100, "change size of line-draw buffer")
 }

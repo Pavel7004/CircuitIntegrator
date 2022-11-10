@@ -36,7 +36,7 @@ var rootCmd = &cobra.Command{
 	Short: "Plotting app",
 	Long: `Application for generating plots for specified circuit.
 
-Example: graph plot -d 300 -s 0.1 -o results
+Example: graph plot -s 0.1 -o results
 
 This will create directory results/ and put plot images into it.`,
 }
@@ -52,7 +52,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/graph/config.yaml)")
-	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "Enable debug mode")
+	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "enable debug mode")
 }
 
 func initConfig() {
