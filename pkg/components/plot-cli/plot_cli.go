@@ -10,6 +10,7 @@ import (
 
 	misc "github.com/Pavel7004/Common/misc"
 	"github.com/Pavel7004/Common/tracing"
+	"github.com/spf13/cobra"
 
 	"github.com/Pavel7004/GraphPlot/pkg/adapters/circuit"
 	"github.com/Pavel7004/GraphPlot/pkg/adapters/integrator"
@@ -41,24 +42,25 @@ func (p *PlotterCli) Plot() {
 
 	s := p.Settings
 
-	if err := os.MkdirAll(s.FolderName, os.ModePerm); err != nil {
-		panic(err)
+	err := os.Mkdir(s.FolderName, os.ModePerm)
+	if os.IsNotExist(err) {
+		cobra.CheckErr(err)
 	}
 
 	for _, int := range domain.Integrators {
 		p.wg.Add(3)
-		go p.PlotSingleTrigger(ctx, int)
-		go p.PlotDiffSingleTrigger(ctx, int)
-		go p.PlotMultiTrigger(ctx, int)
+		go p.plotSingleTrigger(ctx, int)
+		go p.plotDiffSingleTrigger(ctx, int)
+		go p.plotMultiTrigger(ctx, int)
 	}
 
 	p.wg.Wait()
 }
 
-func (p *PlotterCli) PlotSingleTrigger(ctx context.Context, int integrator.NewIntFunc) {
+func (p *PlotterCli) plotSingleTrigger(ctx context.Context, int integrator.NewIntFunc) {
 	s := p.Settings
 
-	gr := plotter.NewInfoPlotter(s.BuffSize, s.Dpi)
+	gr := plotter.NewInfoPlotter(s.BuffSize)
 
 	pointgenerator.Generate(ctx, &pointgenerator.Args{
 		Circuit: p.Circuit,
@@ -72,15 +74,15 @@ func (p *PlotterCli) PlotSingleTrigger(ctx context.Context, int integrator.NewIn
 	})
 	gr.PlotFunc(color.RGBA{R: 255, A: 255}, p.Circuit.GetLoadVoltageFunc())
 
-	gr.SaveToFile(ctx, path.Join(s.FolderName, misc.GetFuncModule(int)+"_theory.svg"))
+	cobra.CheckErr(gr.SaveToFile(ctx, path.Join(s.FolderName, misc.GetFuncModule(int)+"_theory."+p.Settings.Format)))
 
 	p.wg.Done()
 }
 
-func (p *PlotterCli) PlotDiffSingleTrigger(ctx context.Context, int integrator.NewIntFunc) {
+func (p *PlotterCli) plotDiffSingleTrigger(ctx context.Context, int integrator.NewIntFunc) {
 	s := p.Settings
 
-	gr := plotter.NewInfoPlotter(s.BuffSize, s.Dpi)
+	gr := plotter.NewInfoPlotter(s.BuffSize)
 	gr.SetYLabel("X(t), %")
 
 	theory := p.Circuit.GetLoadVoltageFunc()
@@ -90,7 +92,7 @@ func (p *PlotterCli) PlotDiffSingleTrigger(ctx context.Context, int integrator.N
 		Step:    s.Step,
 		SaveFn: func(t float64, x *circuit.Circuit) error {
 			vol := x.GetLoadVoltage()
-			if vol < 0.0001 {
+			if vol <= 0 {
 				gr.AddPoint(t, 0.0)
 			} else {
 				gr.AddPoint(t, math.Abs(vol-theory(t))/vol*100)
@@ -101,29 +103,29 @@ func (p *PlotterCli) PlotDiffSingleTrigger(ctx context.Context, int integrator.N
 		NewIntFn: int,
 	})
 
-	gr.SaveToFile(ctx, path.Join(s.FolderName, misc.GetFuncModule(int)+"_diffErr.svg"))
+	cobra.CheckErr(gr.SaveToFile(ctx, path.Join(s.FolderName, misc.GetFuncModule(int)+"_diffErr."+p.Settings.Format)))
 
 	p.wg.Done()
 }
 
-func (p *PlotterCli) PlotMultiTrigger(ctx context.Context, int integrator.NewIntFunc) {
+func (p *PlotterCli) plotMultiTrigger(ctx context.Context, int integrator.NewIntFunc) {
 	s := p.Settings
 
-	gr := plotter.NewInfoPlotter(s.BuffSize, s.Dpi)
+	gr := plotter.NewInfoPlotter(s.BuffSize)
 
 	ctx = context.WithValue(ctx, pointgenerator.EndPoint, 200.0)
 	pointgenerator.Generate(ctx, &pointgenerator.Args{
 		Circuit: p.Circuit,
 		Step:    s.Step,
 		SaveFn: func(t float64, x *circuit.Circuit) error {
-			gr.AddPoint(t, x.GetLoadVoltage())
+			gr.AddPoint(t, x.GetCapVoltage(1))
 
 			return nil
 		},
 		NewIntFn: int,
 	})
 
-	gr.SaveToFile(ctx, path.Join(s.FolderName, misc.GetFuncModule(int)+"_multiTicks.svg"))
+	cobra.CheckErr(gr.SaveToFile(ctx, path.Join(s.FolderName, misc.GetFuncModule(int)+"_multiTicks."+p.Settings.Format)))
 
 	p.wg.Done()
 }

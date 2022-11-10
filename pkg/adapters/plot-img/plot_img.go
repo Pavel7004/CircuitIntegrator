@@ -2,26 +2,24 @@ package graph
 
 import (
 	"context"
-	"image"
 	"image/color"
 
 	"github.com/Pavel7004/Common/tracing"
+	"github.com/tdewolff/canvas"
+	"github.com/tdewolff/canvas/renderers"
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
 	"gonum.org/v1/plot/vg"
-	"gonum.org/v1/plot/vg/draw"
-	"gonum.org/v1/plot/vg/vgimg"
 )
 
 type InfoPlotter struct {
 	plot       *plot.Plot
-	dpi        int
 	color      color.Color
 	points     plotter.XYs
 	bufferSize int
 }
 
-func NewInfoPlotter(bufferSize, dpi int) *InfoPlotter {
+func NewInfoPlotter(bufferSize int) *InfoPlotter {
 	p := plot.New()
 
 	p.Add(plotter.NewGrid())
@@ -30,38 +28,16 @@ func NewInfoPlotter(bufferSize, dpi int) *InfoPlotter {
 
 	return &InfoPlotter{
 		plot:       p,
-		dpi:        dpi,
 		color:      nil,
 		points:     make(plotter.XYs, 0, bufferSize),
 		bufferSize: bufferSize,
 	}
 }
 
-func (ip *InfoPlotter) EnableLogScale() {
-	ip.plot.Y.Scale = plot.LogScale{}
-}
-
-func (ip *InfoPlotter) DrawInImage(ctx context.Context) image.Image {
-	span, _ := tracing.StartSpanFromContext(ctx)
-	span.SetTag("buffer size", ip.bufferSize)
-
-	defer span.Finish()
-
-	if len(ip.points) > 1 {
-		ip.plotPoints()
-	}
-
-	img := image.NewRGBA(image.Rect(0, 0, 16*ip.dpi, 16*ip.dpi))
-	c := vgimg.NewWith(vgimg.UseImage(img))
-	ip.plot.Draw(draw.New(c))
-
-	return c.Image()
-}
-
-func (ip *InfoPlotter) SaveToFile(ctx context.Context, filename string) {
+func (ip *InfoPlotter) SaveToFile(ctx context.Context, filename string) error {
 	span, _ := tracing.StartSpanFromContext(ctx)
 	span.SetTag("filename", filename)
-	span.SetTag("buffer size", ip.bufferSize)
+	span.SetTag("buffer-size", ip.bufferSize)
 
 	defer span.Finish()
 
@@ -69,9 +45,14 @@ func (ip *InfoPlotter) SaveToFile(ctx context.Context, filename string) {
 		ip.plotPoints()
 	}
 
-	if err := ip.plot.Save(8*vg.Inch, 8*vg.Inch, filename); err != nil {
-		panic(err)
-	}
+	w, h := 200.0, 200.0
+
+	c := canvas.New(w, h)
+	gonumC := renderers.NewGonumPlot(c)
+
+	ip.plot.Draw(gonumC)
+
+	return renderers.Write(filename, c)
 }
 
 func (ip *InfoPlotter) SetPlotColor(color color.Color) {
@@ -92,6 +73,14 @@ func (ip *InfoPlotter) PlotFunc(color color.Color, fn func(x float64) float64) {
 	ip.plot.Add(pFn)
 }
 
+func (ip *InfoPlotter) AddPoint(x, y float64) {
+	ip.points = append(ip.points, plotter.XY{X: x, Y: y})
+
+	if len(ip.points) == ip.bufferSize {
+		ip.plotPoints()
+	}
+}
+
 func (ip *InfoPlotter) plotPoints() {
 	l, err := plotter.NewLine(ip.points)
 	if err != nil {
@@ -105,12 +94,4 @@ func (ip *InfoPlotter) plotPoints() {
 	lastPoint := ip.points[len(ip.points)-1]
 	ip.points = make(plotter.XYs, 0, ip.bufferSize)
 	ip.points = append(ip.points, lastPoint)
-}
-
-func (ip *InfoPlotter) AddPoint(x, y float64) {
-	ip.points = append(ip.points, plotter.XY{X: x, Y: y})
-
-	if len(ip.points) == ip.bufferSize {
-		ip.plotPoints()
-	}
 }
