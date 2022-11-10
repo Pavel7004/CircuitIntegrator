@@ -3,6 +3,7 @@ package websession
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/Pavel7004/Common/tracing"
 	"github.com/gorilla/websocket"
@@ -77,7 +78,8 @@ func (s *Session) plot(ctx context.Context, endCh chan struct{}, intNum int, cir
 	defer span.Finish()
 
 	bufferX := make([]float64, 0, 10)
-	bufferY := make([]float64, 0, 10)
+	// bufferY := make([]float64, 0, 10)
+	bufferY := []float64{1.0, 2.0, 3.0, 4.0, 5.0, 6, 7, 8, 9, 10}
 
 	pointgenerator.Generate(ctx, &pointgenerator.Args{
 		Circuit: circ,
@@ -89,20 +91,25 @@ func (s *Session) plot(ctx context.Context, endCh chan struct{}, intNum int, cir
 			default:
 				if len(bufferX) != cap(bufferX) {
 					bufferX = append(bufferX, t)
-					bufferY = append(bufferY, x.GetLoadVoltage())
+					// bufferY = append(bufferY, x.GetLoadVoltage())
+				} else {
+					fmt.Println(bufferX, bufferY)
+					err := s.conn.WriteJSON(struct {
+						Type string    `json:"type"`
+						X    []float64 `json:"x"`
+						Y    []float64 `json:"y"`
+					}{
+						"point",
+						bufferX,
+						bufferY,
+					})
+					if err != nil {
+						return err
+					}
 
 					bufferX = make([]float64, 0, 10)
-					bufferY = make([]float64, 0, 10)
-				} else if err := s.conn.WriteJSON(struct {
-					Type string    `json:"type"`
-					X    []float64 `json:"x"`
-					Y    []float64 `json:"y"`
-				}{
-					"point",
-					bufferX,
-					bufferY,
-				}); err != nil {
-					return err
+					bufferY = []float64{1.0, 2.0, 3.0, 4.0, 5.0, 6, 7, 8, 9, 10}
+					// bufferY = make([]float64, 0, 10)
 				}
 			}
 			return nil

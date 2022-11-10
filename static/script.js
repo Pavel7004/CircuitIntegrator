@@ -45,7 +45,11 @@ socket.onmessage = (event) => {
         let data = {
             x: dataX,
             y: dataY,
-            mode: 'lines'
+            mode: 'lines',
+            line: {
+                color: 'rgb(255, 0, 0)',
+                width: 5
+            }
         };
 
         let layout = {
