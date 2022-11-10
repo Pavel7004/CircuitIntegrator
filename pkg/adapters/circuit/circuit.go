@@ -75,6 +75,10 @@ func (st *Circuit) GetLoadVoltage() float64 {
 	return st.state.GetLoadVoltage()
 }
 
+func (c *Circuit) ImplicitStep(step float64, d *Derivative) float64 {
+	return c.state.ImplicitStep(step, d)
+}
+
 func (st *Circuit) GetSystemPeriod() float64 {
 	return -st.tau[0] * math.Log(1-st.gapTriggerVoltage/st.supplyVoltage)
 }

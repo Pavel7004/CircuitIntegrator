@@ -40,10 +40,11 @@ func (s *dischargingState) CalculateOptimalStep(oldStep float64, d *Derivative) 
 		}
 	}
 
-	if l < FloatPointAccuracy {
-		return r
-	}
 	return l
+}
+
+func (s *dischargingState) ImplicitStep(step float64, d *Derivative) float64 {
+	return FloatPointAccuracy
 }
 
 func (s *dischargingState) Clone(newCirc *Circuit) circuitState {
