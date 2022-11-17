@@ -2,7 +2,6 @@ package eulerimplicit
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/Pavel7004/Common/tracing"
 
@@ -10,7 +9,7 @@ import (
 	"github.com/Pavel7004/GraphPlot/pkg/adapters/integrator"
 )
 
-const errorTolerance = 1e-10
+const errorTolerance = 1e-4
 
 type EulerImplInt struct {
 	begin  float64
@@ -58,10 +57,11 @@ func (int *EulerImplInt) Integrate(ctx context.Context, circ *circuit.Circuit) f
 			last = true
 		}
 
-		err := 100000.0
-		for err > errorTolerance {
-			err = circ.ImplicitStep(int.step, k1)
-			fmt.Println(err)
+		err := 100.0
+		for i := 0; i < 10 && err > errorTolerance; i++ {
+			prev := circ.Clone()
+			d := circ.Clone().ApplyDerivative(int.step, circ.GetDerivative()).GetDerivative()
+			err = circ.ImplicitStep(int.step, d, prev)
 		}
 
 		t += int.step
