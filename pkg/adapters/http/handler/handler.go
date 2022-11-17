@@ -33,7 +33,7 @@ func New() *Handler {
 }
 
 func (h *Handler) SendError(c *gin.Context, err error) {
-	if e, ok := err.(*domain.Error); ok {
+	if e, ok := err.(*domain.Error); ok { //nolint
 		c.JSON(e.CodeHTTP, e)
 	} else {
 		c.JSON(500, &domain.Error{
