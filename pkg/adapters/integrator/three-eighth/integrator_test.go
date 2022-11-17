@@ -23,7 +23,7 @@ var (
 	}
 )
 
-func BenchmarkWithoutPool(b *testing.B) {
+func BenchmarkIntegrate(b *testing.B) {
 	int := threeeighth.NewThreeEighthInt(0, 60, 0.0001, func(t float64, x *circuit.Circuit) error {
 		return nil
 	})
