@@ -9,7 +9,7 @@ import (
 	"github.com/Pavel7004/GraphPlot/pkg/adapters/integrator"
 )
 
-const errorTolerance = 1e-4
+const errorTolerance = 1e-8
 
 type EulerImplInt struct {
 	begin  float64
@@ -58,8 +58,8 @@ func (int *EulerImplInt) Integrate(ctx context.Context, circ *circuit.Circuit) f
 		}
 
 		err := 100.0
-		for i := 0; i < 10 && err > errorTolerance; i++ {
-			prev := circ.Clone()
+		prev := circ.Clone()
+		for i := 0; i < 20 && err > errorTolerance; i++ {
 			d := circ.Clone().ApplyDerivative(int.step, circ.GetDerivative()).GetDerivative()
 			err = circ.ImplicitStep(int.step, d, prev)
 		}
