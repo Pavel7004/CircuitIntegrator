@@ -74,7 +74,7 @@ func init() {
 	plotCmd.Flags().Float64VarP(&supplyVol, "supply-voltage", "v", 6000, "change supply voltage in circuit")
 	plotCmd.Flags().Float64VarP(&loadRes, "load-resistance", "l", 10000, "change load resistance value")
 
-	plotCmd.Flags().Float64VarP(&step, "step", "s", 0.1, "change default step amount")
+	plotCmd.Flags().Float64VarP(&step, "step", "s", 0.001, "change default step amount")
 	plotCmd.Flags().StringVarP(&output, "output", "o", "results", "change results directory name")
 	plotCmd.Flags().StringVarP(&format, "format", "f", "svg", "change resulting images format")
 
