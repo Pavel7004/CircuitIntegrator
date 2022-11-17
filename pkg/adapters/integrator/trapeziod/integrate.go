@@ -9,7 +9,7 @@ import (
 	"github.com/Pavel7004/GraphPlot/pkg/adapters/integrator"
 )
 
-const errorTolerance = 1e-4
+const errorTolerance = 1e-8
 
 type TrapezoidInt struct {
 	begin  float64
@@ -63,7 +63,7 @@ func (int *TrapezoidInt) Integrate(ctx context.Context, circ *circuit.Circuit) f
 
 		err := 100.0
 		prev := circ.Clone()
-		for i := 0; i < 10 && err > errorTolerance; i++ {
+		for i := 0; i < 20 && err > errorTolerance; i++ {
 			k1 := circ.GetDerivative()
 			tmp := circ.Clone().ApplyDerivative(int.step/2, k1).GetDerivative()
 			k2 := circ.Clone().ApplyDerivative(int.step, k1.WeighCopy(1.0/2).Add(1.0/2, tmp)).GetDerivative()
