@@ -1,7 +1,5 @@
 package circuit
 
-import "math"
-
 type chargingState struct {
 	circ *Circuit
 }
@@ -43,21 +41,6 @@ func (s *chargingState) CalculateOptimalStep(oldStep float64, d *Derivative) flo
 	}
 
 	return l
-}
-
-func (s *chargingState) ImplicitStep(step float64, d *Derivative) float64 {
-	errorCap := make([]float64, len(s.circ.voltagesCap))
-	for i, cap := range s.circ.voltagesCap {
-		f := 1 / (1 + step/s.circ.tau[i])
-		s.circ.voltagesCap[i] = cap - f*(cap-step*d.capVolts[i])
-		errorCap[i] = math.Abs(s.circ.voltagesCap[i] - cap)
-	}
-
-	error := 0.0
-	for _, err := range errorCap {
-		error += err * err
-	}
-	return math.Sqrt(error)
 }
 
 func (s *chargingState) Clone(newCirc *Circuit) circuitState {
