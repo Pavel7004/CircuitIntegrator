@@ -118,7 +118,7 @@ func (p *PlotterCli) plotMultiTrigger(ctx context.Context, int integrator.NewInt
 		Circuit: p.Circuit,
 		Step:    s.Step,
 		SaveFn: func(t float64, x *circuit.Circuit) error {
-			gr.AddPoint(t, x.GetCapVoltage(1))
+			gr.AddPoint(t, x.GetLoadVoltage())
 
 			return nil
 		},
