@@ -9,7 +9,6 @@ import (
 	"github.com/tdewolff/canvas/renderers"
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
-	"gonum.org/v1/plot/vg"
 )
 
 type InfoPlotter struct {
@@ -67,7 +66,6 @@ func (ip *InfoPlotter) PlotFunc(color color.Color, fn func(x float64) float64) {
 	pFn := plotter.NewFunction(fn)
 
 	pFn.Color = color
-	pFn.Width = vg.Points(1)
 	pFn.Samples = 500
 
 	ip.plot.Add(pFn)
@@ -87,7 +85,6 @@ func (ip *InfoPlotter) plotPoints() {
 		panic(err)
 	}
 
-	l.LineStyle.Width = vg.Points(1)
 	l.LineStyle.Color = ip.color
 	ip.plot.Add(l)
 
