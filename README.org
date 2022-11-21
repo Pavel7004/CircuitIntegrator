@@ -36,7 +36,7 @@ Available formats are: png, svg, tex, pdf, jpg, jpeg, eps, tif, tiff.
 
 Example: graph plot -s 0.1 -o results -f png
 
-This will create directory results/ and put plot images in \"png\" format into it.
+This will create directory results/ and put plot images in "png" format into it.
 
 Usage:
   graph plot [flags]

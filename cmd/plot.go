@@ -35,12 +35,12 @@ var (
 var plotCmd = &cobra.Command{
 	Use:   "plot",
 	Short: "Generate plot image",
-	Long: `Generate plot image in your directory.
+	Long: `Generate plot images in your directory.
 Available formats are: png, svg, tex, pdf, jpg, jpeg, eps, tif, tiff.
 
 Example: graph plot -s 0.1 -o results -f png
 
-This will create directory results/ and put plot images in \"png\" format into it.`,
+This will create directory results/ and put plot images in "png" format into it.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		chargeCirc := &circuit.ChargeComponents{
 			SupplyVoltage:     supplyVol,

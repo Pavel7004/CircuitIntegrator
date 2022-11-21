@@ -36,7 +36,7 @@ var rootCmd = &cobra.Command{
 	Short: "Plotting app",
 	Long: `Application for generating plots for specified circuit.
 
-Example: graph plot -s 0.1 -o results
+Example: graph plot -o results
 
 This will create directory results/ and put plot images into it.`,
 }
