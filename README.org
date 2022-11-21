@@ -6,18 +6,53 @@
 При запуске создает png файл, содержащий график напряжения на резисторе-нагрузке, в текущей директории.
 
 * Зависимости
-- golang
+- golang 1.16+
 #+begin_src bash
 # Ubuntu:
 apt install golang
 # Arch Linux:
 pacman -S go
 #+end_src
-- gonum v0.7.0
+- [[https://github.com/gonum/plot][gonum]] v0.12.0
+- [[https://github.com/tdewolff/canvas][canvas]]
 
 * Сборка программы
 #+begin_src bash
 make
+#+end_src
+
+* Пример запуска программы
+#+begin_src bash
+./graph plot
+#+end_src
+
+** Доступные аргументы
+#+begin_src text
+./graph plot --help
+
+Generate plot images in your directory.
+Available formats are: png, svg, tex, pdf, jpg, jpeg, eps, tif, tiff.
+
+Example: graph plot -s 0.1 -o results -f png
+
+This will create directory results/ and put plot images in \"png\" format into it.
+
+Usage:
+  graph plot [flags]
+
+Flags:
+      --buffer-size int         change size of line-draw buffer (default 100)
+  -c, --capacitors uint         change number of capacitors in circuit (default 6)
+  -f, --format string           change resulting images format (default "svg")
+  -h, --help                    help for plot
+  -l, --load-resistance float   change load resistance value (default 10000)
+  -o, --output string           change results directory name (default "results")
+  -s, --step float              change default step amount (default 0.001)
+  -v, --supply-voltage float    change supply voltage in circuit (default 6000)
+
+Global Flags:
+      --config string   config file (default is $HOME/.config/graph/config.yaml)
+      --debug           enable debug mode
 #+end_src
 
 * Описание системы ОДУ
@@ -82,18 +117,6 @@ f(x_{i}) = -1/\tau_{i} * x_{i}
 
   Код, отвечающий за обработку аргументов командной строки.
 
-  Доступные аргументы:
-
-  + ~--step/-s~ шаг интегрирования (по умолчанию 0.1)
-
-  + ~--output/-o~ имя файла с графиком (по умолчанию "result.png")
-
-  + ~--dpi/-d~ задание dpi графика (по умолчанию 40)
-
-  + ~--stages-count/-c~ Указание количества конденсаторов в цепи (по умолчанию 5)
-
-  + ~--load-resistance/-l~ Указание сопротивления нагрузки (по умолчанию 10000)
-
 * Примеры вывода
 ** Характеристики схемы
 - Электроемкость конденсаторов (C): 1 мкФ
@@ -104,11 +127,6 @@ f(x_{i}) = -1/\tau_{i} * x_{i}
 - Сопротивление нагрузки: 10 кОм
 
 [[./misc/scheme.png]]
-
-Запуск программы:
-#+begin_src bash
-./plotter -s 0.1 -o result.png
-#+end_src
 
 ** Метод Эйлера vs Теория
 [[./misc/euler-theory.png]]
