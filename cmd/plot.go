@@ -23,13 +23,16 @@ import (
 )
 
 var (
-	supplyVol float64
-	capCount  uint
-	loadRes   float64
-	step      float64
-	output    string
-	buffSize  int
-	format    string
+	supplyVol  float64
+	capCount   uint
+	capacity   float64
+	resistance float64
+	triggerVol float64
+	loadRes    float64
+	step       float64
+	output     string
+	buffSize   int
+	format     string
 )
 
 var plotCmd = &cobra.Command{
@@ -44,10 +47,10 @@ This will create directory results/ and put plot images in "png" format into it.
 	Run: func(cmd *cobra.Command, args []string) {
 		chargeCirc := &circuit.ChargeComponents{
 			SupplyVoltage:     supplyVol,
-			Capacity:          0.001,
-			Resistance:        5000,
+			Capacity:          capacity / 1000,
+			Resistance:        resistance,
 			StagesCount:       capCount,
-			GapTriggerVoltage: 5700,
+			GapTriggerVoltage: triggerVol,
 			HoldingVoltage:    1,
 		}
 
@@ -70,9 +73,12 @@ This will create directory results/ and put plot images in "png" format into it.
 func init() {
 	rootCmd.AddCommand(plotCmd)
 
-	plotCmd.Flags().UintVarP(&capCount, "capacitors", "c", 6, "change number of capacitors in circuit")
+	plotCmd.Flags().UintVarP(&capCount, "capacitors", "n", 6, "change number of capacitors in circuit")
 	plotCmd.Flags().Float64VarP(&supplyVol, "supply-voltage", "v", 6000, "change supply voltage in circuit")
 	plotCmd.Flags().Float64VarP(&loadRes, "load-resistance", "l", 10000, "change load resistance value")
+	plotCmd.Flags().Float64VarP(&capacity, "capacity", "c", 1, "change capacity of circuit (in mF)")
+	plotCmd.Flags().Float64VarP(&resistance, "resistance", "r", 5000, "change resistance of circuit")
+	plotCmd.Flags().Float64VarP(&triggerVol, "trigger-voltage", "t", 5700, "change gap trigger voltage in circuit")
 
 	plotCmd.Flags().Float64VarP(&step, "step", "s", 0.001, "change default step amount")
 	plotCmd.Flags().StringVarP(&output, "output", "o", "results", "change results directory name")
