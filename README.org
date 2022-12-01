@@ -7,14 +7,11 @@
 
 * Общая информация
 ** Зависимости
-- golang 1.16+
+- golang 1.15
 #+begin_src bash
-# Ubuntu:
 apt install golang
-# Arch Linux:
-pacman -S go
 #+end_src
-- [[https://github.com/gonum/plot][gonum]] 0.12.0
+- [[https://github.com/gonum/plot][gonum]] 0.9.0
 - [[https://github.com/tdewolff/canvas][canvas]]
 
 ** Сборка программы
