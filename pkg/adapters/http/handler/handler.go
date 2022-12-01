@@ -2,10 +2,10 @@ package handler
 
 import (
 	"html/template"
+	"log"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"github.com/rs/zerolog/log"
 
 	session "github.com/Pavel7004/GraphPlot/pkg/components/web-session"
 	"github.com/Pavel7004/GraphPlot/pkg/domain"
@@ -46,7 +46,7 @@ func (h *Handler) SendError(c *gin.Context, err error) {
 func (h *Handler) GetIndexPage(c *gin.Context) {
 	tmpl, err := template.ParseFiles("templates/index.html")
 	if err != nil {
-		log.Warn().Err(err).Msg("Failed to parse \"templates/index.html\"")
+		log.Printf("[ERROR] Failed to parse \"templates/index.html\". err = %v", err)
 	}
 
 	if err := tmpl.Execute(c.Writer, struct {
@@ -54,7 +54,7 @@ func (h *Handler) GetIndexPage(c *gin.Context) {
 	}{
 		domain.IntegratorsNames,
 	}); err != nil {
-		log.Error().Err(err).Msg("Failed to execute \"templates/index.html\"")
+		log.Printf("[ERROR] to execute \"templates/index.html\". err = %v", err)
 	}
 }
 

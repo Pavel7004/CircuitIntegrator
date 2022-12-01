@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/Pavel7004/Common/tracing"
 	"github.com/gorilla/websocket"
-	"github.com/rs/zerolog/log"
 
 	"github.com/Pavel7004/GraphPlot/pkg/adapters/circuit"
 	pointgenerator "github.com/Pavel7004/GraphPlot/pkg/components/point-generator"
@@ -44,7 +44,7 @@ func (s *Session) listenConn() {
 	for {
 		if err := s.conn.ReadJSON(data); err != nil {
 			if !websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway) {
-				log.Error().Err(err).Msg("Error on reading json from user")
+				log.Printf("[WARN] Error during json reading. err = %v", err)
 			}
 			break
 		}
@@ -54,7 +54,7 @@ func (s *Session) listenConn() {
 			close(endCh)
 		}
 		if err := data.Check(); err != nil {
-			log.Warn().Err(err).Msg("User data is incorrect")
+			log.Printf("[WARN] Incorrect data recieved. data = %v", data)
 		}
 
 		circuit := circuit.New(&circuit.ChargeComponents{
@@ -122,6 +122,6 @@ func (s *Session) plot(ctx context.Context, endCh chan struct{}, intNum int, cir
 	}{
 		"end",
 	}); err != nil {
-		log.Error().Err(err).Msg("Failed to send \"end\" signal")
+		log.Printf("[ERROR] Failed to send \"end\" signal. err = %v", err)
 	}
 }

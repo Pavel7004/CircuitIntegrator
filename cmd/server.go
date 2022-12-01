@@ -16,7 +16,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 */package cmd
 
 import (
-	"github.com/rs/zerolog/log"
+	"log"
+
 	"github.com/spf13/cobra"
 
 	"github.com/Pavel7004/GraphPlot/pkg/adapters/http"
@@ -37,7 +38,7 @@ This will start server on localhost:8088. To modify hostname and port create con
 		s := http.New()
 
 		if err := s.Run(); err != nil {
-			log.Error().Err(err).Msg("Error during server operation.")
+			log.Printf("Error during server operation. err = %v", err)
 		}
 	},
 }

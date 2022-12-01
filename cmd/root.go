@@ -16,10 +16,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 */package cmd
 
 import (
+	"log"
 	"os"
 	"path"
 
-	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -69,6 +69,6 @@ func initConfig() {
 	}
 
 	if err := config.Read(); err != nil {
-		log.Info().Err(err).Msg("Failed to read config file.")
+		log.Printf("[WARN] Failed to read config file. err = %v", err)
 	}
 }

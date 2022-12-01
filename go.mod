@@ -20,7 +20,6 @@ require (
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/mattn/go-isatty v0.0.13 // indirect
 	github.com/rogpeppe/go-internal v1.8.0 // indirect
-	github.com/rs/zerolog v1.21.0
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.8.1
 	github.com/tdewolff/canvas v0.0.0-20221118165558-64bc21122b8a
