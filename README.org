@@ -64,7 +64,7 @@ Global Flags:
 
 - pkg/adapters/plot-img
 
-  Код, строящий график по заданным точкам при помощи библиотеки gonum.
+  Построение графика по заданным точкам при помощи библиотеки gonum.
 
 - pkg/adapters/integrator
 
@@ -75,7 +75,7 @@ Global Flags:
 
 - pkg/components/plot-cli
 
-  Запуск интегрирования
+  Запуск интегрирования.
 
 - pkg/components/point-generator
 
