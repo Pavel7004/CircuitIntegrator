@@ -1,11 +1,11 @@
-package threeeighth_test
+package midpoint_test
 
 import (
 	"context"
 	"testing"
 
 	"github.com/Pavel7004/GraphPlot/pkg/adapters/circuit"
-	threeeighth "github.com/Pavel7004/GraphPlot/pkg/adapters/integrator/three-eighth"
+	"github.com/Pavel7004/GraphPlot/pkg/adapters/integrator/midpoint"
 )
 
 var (
@@ -23,8 +23,8 @@ var (
 	}
 )
 
-func BenchmarkThreeEighth(b *testing.B) {
-	int := threeeighth.NewThreeEighthInt(0, 60, 0.0001, func(t float64, x *circuit.Circuit) error {
+func BenchmarkMidpoint(b *testing.B) {
+	int := midpoint.NewMidpointInt(0, 60, 0.0001, func(t float64, x *circuit.Circuit) error {
 		return nil
 	})
 	ctx := context.Background()

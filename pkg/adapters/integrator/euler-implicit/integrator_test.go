@@ -1,11 +1,11 @@
-package threeeighth_test
+package eulerimplicit_test
 
 import (
 	"context"
 	"testing"
 
 	"github.com/Pavel7004/GraphPlot/pkg/adapters/circuit"
-	threeeighth "github.com/Pavel7004/GraphPlot/pkg/adapters/integrator/three-eighth"
+	eulerimplicit "github.com/Pavel7004/GraphPlot/pkg/adapters/integrator/euler-implicit"
 )
 
 var (
@@ -23,8 +23,8 @@ var (
 	}
 )
 
-func BenchmarkThreeEighth(b *testing.B) {
-	int := threeeighth.NewThreeEighthInt(0, 60, 0.0001, func(t float64, x *circuit.Circuit) error {
+func BenchmarkEulerImplicit(b *testing.B) {
+	int := eulerimplicit.NewEulerImplInt(0, 60, 0.0001, func(t float64, x *circuit.Circuit) error {
 		return nil
 	})
 	ctx := context.Background()
