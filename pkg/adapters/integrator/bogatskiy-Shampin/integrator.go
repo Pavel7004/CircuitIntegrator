@@ -41,7 +41,7 @@ func (si *ShapinInt) Integrate(ctx context.Context, circ *circuit.Circuit) float
 		last bool
 	)
 
-	for !last && si.step > 0 {
+	for !last {
 		if t+si.step > si.end {
 			last = true
 			si.step = si.end - t

@@ -76,12 +76,19 @@ func (st *Circuit) GetLoadVoltage() float64 {
 }
 
 func (c *Circuit) ImplicitStep(step float64, d *Derivative, prev *Circuit) float64 {
-	for i := range c.voltagesCap {
-		f := c.voltagesCap[i] - prev.voltagesCap[i] - step*d.capVolts[i]
-		df := 1 - 1.0/c.tau[i]
+	var (
+		f  = c.voltagesCap[0] - prev.voltagesCap[0] - step*d.capVolts[0]
+		df = 1 - 1.0/c.tau[0]
+
+		error = math.Abs(f / df)
+	)
+	c.voltagesCap[0] -= f / df
+	for i := 1; i < len(c.voltagesCap); i++ {
+		f = c.voltagesCap[i] - prev.voltagesCap[i] - step*d.capVolts[i]
+		df = 1 - 1.0/c.tau[i]
 		c.voltagesCap[i] -= f / df
 	}
-	return math.Abs((c.voltagesCap[0] - prev.voltagesCap[0]) / c.voltagesCap[0])
+	return error / c.voltagesCap[0]
 }
 
 func (st *Circuit) GetSystemPeriod() float64 {
