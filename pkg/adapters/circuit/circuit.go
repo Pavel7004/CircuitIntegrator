@@ -88,7 +88,7 @@ func (c *Circuit) ImplicitStep(step float64, d *Derivative, prev *Circuit) float
 		df = 1 - 1.0/c.tau[i]
 		c.voltagesCap[i] -= f / df
 	}
-	return error / c.voltagesCap[0]
+	return error
 }
 
 func (st *Circuit) GetSystemPeriod() float64 {
